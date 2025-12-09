@@ -1,0 +1,918 @@
+version = 1
+
+[commands]
+  [commands.addon-providers-addon-provider-plans-list]
+    service = "AddonProvidersService"
+    method = "AddonProviderPlansList"
+    use = "addon-provider-plans-list"
+    flags = ["addon"]
+    returns = "[]*Plan"
+    renderer = "table"
+  [commands.addon-providers-list]
+    service = "AddonProvidersService"
+    method = "AddonProvidersList"
+    use = "list"
+    returns = "[]*AddonProvider"
+    renderer = "table"
+  [commands.addons-addon-destroy]
+    service = "AddonsService"
+    method = "AddonDestroy"
+    use = "addon-destroy"
+    flags = ["app"]
+    returns = ""
+    renderer = "success"
+  [commands.addons-addon-logs-archives]
+    service = "AddonsService"
+    method = "AddonLogsArchives"
+    use = "addon-logs-archives"
+    flags = ["app", "page"]
+    returns = "*LogsArchivesResponse"
+    renderer = "detail"
+  [commands.addons-addon-logs-u-r-l]
+    service = "AddonsService"
+    method = "AddonLogsURL"
+    use = "addon-logs-u-r-l"
+    flags = ["app"]
+    returns = "string"
+    renderer = "success"
+  [commands.addons-addon-provision]
+    service = "AddonsService"
+    method = "AddonProvision"
+    use = "addon-provision"
+    flags = ["app", "params"]
+    returns = "AddonRes"
+    renderer = "success"
+  [commands.addons-addon-token]
+    service = "AddonsService"
+    method = "AddonToken"
+    use = "addon-token"
+    flags = ["app"]
+    returns = "string"
+    renderer = "success"
+  [commands.addons-addon-upgrade]
+    service = "AddonsService"
+    method = "AddonUpgrade"
+    use = "addon-upgrade"
+    flags = ["app", "params"]
+    returns = "AddonRes"
+    renderer = "success"
+  [commands.addons-list]
+    service = "AddonsService"
+    method = "AddonsList"
+    use = "list"
+    flags = ["app"]
+    returns = "[]*Addon"
+    renderer = "table"
+  [commands.alerts-alert-add]
+    service = "AlertsService"
+    method = "AlertAdd"
+    use = "alert-add"
+    flags = ["app", "params"]
+    returns = "*Alert"
+    renderer = "detail"
+  [commands.alerts-alert-remove]
+    service = "AlertsService"
+    method = "AlertRemove"
+    use = "alert-remove"
+    flags = ["app"]
+    returns = ""
+    renderer = "success"
+  [commands.alerts-alert-show]
+    service = "AlertsService"
+    method = "AlertShow"
+    use = "alert-show"
+    flags = ["app"]
+    returns = "*Alert"
+    renderer = "detail"
+  [commands.alerts-alert-update]
+    service = "AlertsService"
+    method = "AlertUpdate"
+    use = "alert-update"
+    flags = ["app", "params"]
+    returns = "*Alert"
+    renderer = "detail"
+  [commands.alerts-list]
+    service = "AlertsService"
+    method = "AlertsList"
+    use = "list"
+    flags = ["app"]
+    returns = "[]*Alert"
+    renderer = "table"
+  [commands.apps-container-types]
+    service = "AppsService"
+    method = "AppsContainerTypes"
+    use = "container-types"
+    flags = ["app"]
+    returns = "[]ContainerType"
+    renderer = "table"
+  [commands.apps-containers-ps]
+    service = "AppsService"
+    method = "AppsContainersPs"
+    use = "containers-ps"
+    flags = ["app"]
+    returns = "[]Container"
+    renderer = "table"
+  [commands.apps-create]
+    service = "AppsService"
+    method = "AppsCreate"
+    use = "create"
+    flags = ["opts"]
+    returns = "*App"
+    renderer = "detail"
+  [commands.apps-destroy]
+    service = "AppsService"
+    method = "AppsDestroy"
+    use = "destroy"
+    flags = ["name", "current-name"]
+    returns = ""
+    renderer = "success"
+  [commands.apps-force-h-t-t-p-s]
+    service = "AppsService"
+    method = "AppsForceHTTPS"
+    use = "force-h-t-t-p-s"
+    flags = ["name", "enable"]
+    returns = "*App"
+    renderer = "detail"
+  [commands.apps-list]
+    service = "AppsService"
+    method = "AppsList"
+    use = "list"
+    returns = "[]*App"
+    renderer = "table"
+  [commands.apps-rename]
+    service = "AppsService"
+    method = "AppsRename"
+    use = "rename"
+    flags = ["name", "new-name"]
+    returns = "*App"
+    renderer = "detail"
+  [commands.apps-restart]
+    service = "AppsService"
+    method = "AppsRestart"
+    use = "restart"
+    flags = ["app", "scope"]
+    returns = "*http.Response"
+    renderer = "detail"
+  [commands.apps-router-logs]
+    service = "AppsService"
+    method = "AppsRouterLogs"
+    use = "router-logs"
+    flags = ["name", "enable"]
+    returns = "*App"
+    renderer = "detail"
+  [commands.apps-scale]
+    service = "AppsService"
+    method = "AppsScale"
+    use = "scale"
+    flags = ["app", "params"]
+    returns = "*http.Response"
+    renderer = "detail"
+  [commands.apps-set-stack]
+    service = "AppsService"
+    method = "AppsSetStack"
+    use = "set-stack"
+    flags = ["name", "stack-i-d"]
+    returns = "*App"
+    renderer = "detail"
+  [commands.apps-show]
+    service = "AppsService"
+    method = "AppsShow"
+    use = "show"
+    flags = ["app-name"]
+    returns = "*App"
+    renderer = "detail"
+  [commands.apps-stats]
+    service = "AppsService"
+    method = "AppsStats"
+    use = "stats"
+    flags = ["app"]
+    returns = "*AppStatsRes"
+    renderer = "detail"
+  [commands.apps-sticky-session]
+    service = "AppsService"
+    method = "AppsStickySession"
+    use = "sticky-session"
+    flags = ["name", "enable"]
+    returns = "*App"
+    renderer = "detail"
+  [commands.apps-transfer]
+    service = "AppsService"
+    method = "AppsTransfer"
+    use = "transfer"
+    flags = ["name", "email"]
+    returns = "*App"
+    renderer = "detail"
+  [commands.autoscalers-autoscaler-add]
+    service = "AutoscalersService"
+    method = "AutoscalerAdd"
+    use = "autoscaler-add"
+    flags = ["app", "params"]
+    returns = "*Autoscaler"
+    renderer = "detail"
+  [commands.autoscalers-autoscaler-remove]
+    service = "AutoscalersService"
+    method = "AutoscalerRemove"
+    use = "autoscaler-remove"
+    flags = ["app", "id"]
+    returns = ""
+    renderer = "success"
+  [commands.autoscalers-list]
+    service = "AutoscalersService"
+    method = "AutoscalersList"
+    use = "list"
+    flags = ["app"]
+    returns = "[]Autoscaler"
+    renderer = "table"
+  [commands.backups-backup-create]
+    service = "BackupsService"
+    method = "BackupCreate"
+    use = "backup-create"
+    flags = ["app"]
+    returns = "*Backup"
+    renderer = "detail"
+  [commands.backups-backup-download-u-r-l]
+    service = "BackupsService"
+    method = "BackupDownloadURL"
+    use = "backup-download-u-r-l"
+    flags = ["app"]
+    returns = "string"
+    renderer = "success"
+  [commands.backups-backup-list]
+    service = "BackupsService"
+    method = "BackupList"
+    use = "backup-list"
+    flags = ["app"]
+    returns = "[]Backup"
+    renderer = "table"
+  [commands.backups-backup-show]
+    service = "BackupsService"
+    method = "BackupShow"
+    use = "backup-show"
+    flags = ["app"]
+    returns = "*Backup"
+    renderer = "detail"
+  [commands.collaborators-collaborator-add]
+    service = "CollaboratorsService"
+    method = "CollaboratorAdd"
+    use = "collaborator-add"
+    flags = ["app", "params"]
+    returns = "Collaborator"
+    renderer = "success"
+  [commands.collaborators-collaborator-remove]
+    service = "CollaboratorsService"
+    method = "CollaboratorRemove"
+    use = "collaborator-remove"
+    flags = ["app"]
+    returns = ""
+    renderer = "success"
+  [commands.collaborators-collaborator-update]
+    service = "CollaboratorsService"
+    method = "CollaboratorUpdate"
+    use = "collaborator-update"
+    flags = ["app", "params"]
+    returns = "Collaborator"
+    renderer = "success"
+  [commands.collaborators-list]
+    service = "CollaboratorsService"
+    method = "CollaboratorsList"
+    use = "list"
+    flags = ["app"]
+    returns = "[]Collaborator"
+    renderer = "table"
+  [commands.container-sizes-list]
+    service = "ContainerSizesService"
+    method = "ContainerSizesList"
+    use = "list"
+    returns = "[]ContainerSize"
+    renderer = "table"
+  [commands.containers-stop]
+    service = "ContainersService"
+    method = "ContainersStop"
+    use = "stop"
+    flags = ["app-name"]
+    returns = ""
+    renderer = "success"
+  [commands.cron-tasks-get]
+    service = "CronTasksService"
+    method = "CronTasksGet"
+    use = "get"
+    flags = ["app"]
+    returns = "CronTasks"
+    renderer = "success"
+  [commands.databases-database-disable-feature]
+    service = "DatabasesService"
+    method = "DatabaseDisableFeature"
+    use = "database-disable-feature"
+    flags = ["app"]
+    returns = "DatabaseDisableFeatureResponse"
+    renderer = "success"
+  [commands.databases-database-enable-feature]
+    service = "DatabasesService"
+    method = "DatabaseEnableFeature"
+    use = "database-enable-feature"
+    flags = ["app"]
+    returns = "DatabaseEnableFeatureResponse"
+    renderer = "success"
+  [commands.databases-database-list-maintenance]
+    service = "DatabasesService"
+    method = "DatabaseListMaintenance"
+    use = "database-list-maintenance"
+    flags = ["app", "opts"]
+    returns = "[]*Maintenance"
+    renderer = "table"
+  [commands.databases-database-show]
+    service = "DatabasesService"
+    method = "DatabaseShow"
+    use = "database-show"
+    flags = ["app"]
+    returns = "Database"
+    renderer = "success"
+  [commands.databases-database-show-maintenance]
+    service = "DatabasesService"
+    method = "DatabaseShowMaintenance"
+    use = "database-show-maintenance"
+    flags = ["app"]
+    returns = "Maintenance"
+    renderer = "success"
+  [commands.databases-database-update-maintenance-window]
+    service = "DatabasesService"
+    method = "DatabaseUpdateMaintenanceWindow"
+    use = "database-update-maintenance-window"
+    flags = ["app", "params"]
+    returns = "Database"
+    renderer = "success"
+  [commands.databases-database-update-periodic-backups-config]
+    service = "DatabasesService"
+    method = "DatabaseUpdatePeriodicBackupsConfig"
+    use = "database-update-periodic-backups-config"
+    flags = ["app", "params"]
+    returns = "Database"
+    renderer = "success"
+  [commands.databases-preview-database-create]
+    service = "DatabasesPreviewService"
+    method = "DatabaseCreate"
+    use = "database-create"
+    flags = ["params"]
+    returns = "DatabaseNG"
+    renderer = "success"
+  [commands.databases-preview-database-destroy]
+    service = "DatabasesPreviewService"
+    method = "DatabaseDestroy"
+    use = "database-destroy"
+    flags = ["app-i-d"]
+    returns = ""
+    renderer = "success"
+  [commands.databases-preview-database-show]
+    service = "DatabasesPreviewService"
+    method = "DatabaseShow"
+    use = "database-show"
+    flags = ["app-i-d"]
+    returns = "DatabaseNG"
+    renderer = "success"
+  [commands.databases-preview-databases-list]
+    service = "DatabasesPreviewService"
+    method = "DatabasesList"
+    use = "databases-list"
+    returns = "[]DatabaseNG"
+    renderer = "table"
+  [commands.deployments-create]
+    service = "DeploymentsService"
+    method = "DeploymentsCreate"
+    use = "create"
+    flags = ["app", "params"]
+    returns = "*Deployment"
+    renderer = "detail"
+  [commands.deployments-deployment]
+    service = "DeploymentsService"
+    method = "Deployment"
+    use = "deployment"
+    flags = ["app", "deploy"]
+    returns = "*Deployment"
+    renderer = "detail"
+  [commands.deployments-deployment-list]
+    service = "DeploymentsService"
+    method = "DeploymentList"
+    use = "deployment-list"
+    flags = ["app"]
+    returns = "[]*Deployment"
+    renderer = "table"
+  [commands.deployments-deployment-list-with-pagination]
+    service = "DeploymentsService"
+    method = "DeploymentListWithPagination"
+    use = "deployment-list-with-pagination"
+    flags = ["app", "opts"]
+    returns = "[]*Deployment"
+    renderer = "table"
+  [commands.deployments-deployment-logs]
+    service = "DeploymentsService"
+    method = "DeploymentLogs"
+    use = "deployment-logs"
+    flags = ["deploy-u-r-l"]
+    returns = "*http.Response"
+    renderer = "detail"
+  [commands.deployments-deployment-stream]
+    service = "DeploymentsService"
+    method = "DeploymentStream"
+    use = "deployment-stream"
+    flags = ["deploy-u-r-l"]
+    returns = "*websocket.Conn"
+    renderer = "detail"
+  [commands.domains-add]
+    service = "DomainsService"
+    method = "DomainsAdd"
+    use = "add"
+    flags = ["app", "d"]
+    returns = "Domain"
+    renderer = "success"
+  [commands.domains-domain-set-canonical]
+    service = "DomainsService"
+    method = "DomainSetCanonical"
+    use = "domain-set-canonical"
+    flags = ["app"]
+    returns = "Domain"
+    renderer = "success"
+  [commands.domains-domain-set-certificate]
+    service = "DomainsService"
+    method = "DomainSetCertificate"
+    use = "domain-set-certificate"
+    flags = ["app"]
+    returns = "Domain"
+    renderer = "success"
+  [commands.domains-domain-unset-canonical]
+    service = "DomainsService"
+    method = "DomainUnsetCanonical"
+    use = "domain-unset-canonical"
+    flags = ["app"]
+    returns = "Domain"
+    renderer = "success"
+  [commands.domains-domain-unset-certificate]
+    service = "DomainsService"
+    method = "DomainUnsetCertificate"
+    use = "domain-unset-certificate"
+    flags = ["app"]
+    returns = "Domain"
+    renderer = "success"
+  [commands.domains-list]
+    service = "DomainsService"
+    method = "DomainsList"
+    use = "list"
+    flags = ["app"]
+    returns = "[]Domain"
+    renderer = "table"
+  [commands.domains-remove]
+    service = "DomainsService"
+    method = "DomainsRemove"
+    use = "remove"
+    flags = ["app", "id"]
+    returns = ""
+    renderer = "success"
+  [commands.domains-update]
+    service = "DomainsService"
+    method = "DomainsUpdate"
+    use = "update"
+    flags = ["app", "id", "d"]
+    returns = "Domain"
+    renderer = "success"
+  [commands.events-event-categories-list]
+    service = "EventsService"
+    method = "EventCategoriesList"
+    use = "event-categories-list"
+    returns = "[]EventCategory"
+    renderer = "table"
+  [commands.events-event-types-list]
+    service = "EventsService"
+    method = "EventTypesList"
+    use = "event-types-list"
+    returns = "[]EventType"
+    renderer = "table"
+  [commands.events-list]
+    service = "EventsService"
+    method = "EventsList"
+    use = "list"
+    flags = ["app", "opts"]
+    returns = "Events"
+    renderer = "success"
+  [commands.events-user-events-list]
+    service = "EventsService"
+    method = "UserEventsList"
+    use = "user-events-list"
+    flags = ["opts"]
+    returns = "Events"
+    renderer = "success"
+  [commands.invoices-invoice-show]
+    service = "InvoicesService"
+    method = "InvoiceShow"
+    use = "invoice-show"
+    flags = ["string"]
+    returns = "*Invoice"
+    renderer = "detail"
+  [commands.invoices-list]
+    service = "InvoicesService"
+    method = "InvoicesList"
+    use = "list"
+    flags = ["opts"]
+    returns = "Invoices"
+    renderer = "success"
+  [commands.keys-add]
+    service = "KeysService"
+    method = "KeysAdd"
+    use = "add"
+    flags = ["name", "content"]
+    returns = "*Key"
+    renderer = "detail"
+  [commands.keys-delete]
+    service = "KeysService"
+    method = "KeysDelete"
+    use = "delete"
+    flags = ["id"]
+    returns = ""
+    renderer = "success"
+  [commands.keys-list]
+    service = "KeysService"
+    method = "KeysList"
+    use = "list"
+    returns = "[]Key"
+    renderer = "table"
+  [commands.log-drains-addon-list]
+    service = "LogDrainsService"
+    method = "LogDrainsAddonList"
+    use = "addon-list"
+    flags = ["app", "addon-i-d"]
+    returns = "[]LogDrain"
+    renderer = "table"
+  [commands.log-drains-list]
+    service = "LogDrainsService"
+    method = "LogDrainsList"
+    use = "list"
+    flags = ["app"]
+    returns = "[]LogDrain"
+    renderer = "table"
+  [commands.log-drains-log-drain-add]
+    service = "LogDrainsService"
+    method = "LogDrainAdd"
+    use = "log-drain-add"
+    flags = ["app", "params"]
+    returns = "*LogDrainRes"
+    renderer = "detail"
+  [commands.log-drains-log-drain-addon-add]
+    service = "LogDrainsService"
+    method = "LogDrainAddonAdd"
+    use = "log-drain-addon-add"
+    flags = ["app", "addon-i-d", "params"]
+    returns = "*LogDrainRes"
+    renderer = "detail"
+  [commands.log-drains-log-drain-addon-remove]
+    service = "LogDrainsService"
+    method = "LogDrainAddonRemove"
+    use = "log-drain-addon-remove"
+    flags = ["app", "u-r-l"]
+    returns = ""
+    renderer = "success"
+  [commands.log-drains-log-drain-remove]
+    service = "LogDrainsService"
+    method = "LogDrainRemove"
+    use = "log-drain-remove"
+    flags = ["app"]
+    returns = ""
+    renderer = "success"
+  [commands.logs-]
+    service = "LogsService"
+    method = "Logs"
+    use = ""
+    flags = ["logs-u-r-l", "n", "filter"]
+    returns = "*http.Response"
+    renderer = "detail"
+  [commands.logs-archives-]
+    service = "LogsArchivesService"
+    method = "LogsArchives"
+    use = ""
+    flags = ["app", "page"]
+    returns = "*LogsArchivesResponse"
+    renderer = "detail"
+  [commands.logs-archives-by-cursor]
+    service = "LogsArchivesService"
+    method = "LogsArchivesByCursor"
+    use = "by-cursor"
+    flags = ["app", "cursor"]
+    returns = "*LogsArchivesResponse"
+    renderer = "detail"
+  [commands.logs-u-r-l]
+    service = "LogsService"
+    method = "LogsURL"
+    use = "u-r-l"
+    flags = ["app"]
+    returns = "*http.Response"
+    renderer = "detail"
+  [commands.notification-platforms-list]
+    service = "NotificationPlatformsService"
+    method = "NotificationPlatformsList"
+    use = "list"
+    returns = "[]*NotificationPlatform"
+    renderer = "table"
+  [commands.notification-platforms-notification-platform-by-name]
+    service = "NotificationPlatformsService"
+    method = "NotificationPlatformByName"
+    use = "notification-platform-by-name"
+    flags = ["name"]
+    returns = "[]*NotificationPlatform"
+    renderer = "table"
+  [commands.notifiers-list]
+    service = "NotifiersService"
+    method = "NotifiersList"
+    use = "list"
+    flags = ["app"]
+    returns = "Notifiers"
+    renderer = "success"
+  [commands.notifiers-notifier-by-i-d]
+    service = "NotifiersService"
+    method = "NotifierByID"
+    use = "notifier-by-i-d"
+    flags = ["app"]
+    returns = "*Notifier"
+    renderer = "detail"
+  [commands.notifiers-notifier-destroy]
+    service = "NotifiersService"
+    method = "NotifierDestroy"
+    use = "notifier-destroy"
+    flags = ["app"]
+    returns = ""
+    renderer = "success"
+  [commands.notifiers-notifier-provision]
+    service = "NotifiersService"
+    method = "NotifierProvision"
+    use = "notifier-provision"
+    flags = ["app", "params"]
+    returns = "*Notifier"
+    renderer = "detail"
+  [commands.notifiers-notifier-update]
+    service = "NotifiersService"
+    method = "NotifierUpdate"
+    use = "notifier-update"
+    flags = ["app", "params"]
+    returns = "*Notifier"
+    renderer = "detail"
+  [commands.operations-show]
+    service = "OperationsService"
+    method = "OperationsShow"
+    use = "show"
+    flags = ["app"]
+    returns = "*Operation"
+    renderer = "detail"
+  [commands.private-networks-domains-list]
+    service = "PrivateNetworksService"
+    method = "PrivateNetworksDomainsList"
+    use = "domains-list"
+    flags = ["app", "page", "per-page"]
+    returns = "unknown"
+    renderer = "success"
+  [commands.projects-list]
+    service = "ProjectsService"
+    method = "ProjectsList"
+    use = "list"
+    returns = "[]Project"
+    renderer = "table"
+  [commands.projects-project-add]
+    service = "ProjectsService"
+    method = "ProjectAdd"
+    use = "project-add"
+    flags = ["params"]
+    returns = "Project"
+    renderer = "success"
+  [commands.projects-project-delete]
+    service = "ProjectsService"
+    method = "ProjectDelete"
+    use = "project-delete"
+    flags = ["project-i-d"]
+    returns = ""
+    renderer = "success"
+  [commands.projects-project-get]
+    service = "ProjectsService"
+    method = "ProjectGet"
+    use = "project-get"
+    flags = ["project-i-d"]
+    returns = "Project"
+    renderer = "success"
+  [commands.projects-project-update]
+    service = "ProjectsService"
+    method = "ProjectUpdate"
+    use = "project-update"
+    flags = ["project-i-d", "params"]
+    returns = "Project"
+    renderer = "success"
+  [commands.regions-list]
+    service = "RegionsService"
+    method = "RegionsList"
+    use = "list"
+    returns = "[]Region"
+    renderer = "table"
+  [commands.runs-run]
+    service = "RunsService"
+    method = "Run"
+    use = "run"
+    flags = ["opts"]
+    returns = "*RunRes"
+    renderer = "detail"
+  [commands.s-c-m-integrations-create]
+    service = "SCMIntegrationsService"
+    method = "SCMIntegrationsCreate"
+    use = "create"
+    flags = ["scm-type", "url", "access-token"]
+    returns = "*SCMIntegration"
+    renderer = "detail"
+  [commands.s-c-m-integrations-delete]
+    service = "SCMIntegrationsService"
+    method = "SCMIntegrationsDelete"
+    use = "delete"
+    flags = ["id"]
+    returns = ""
+    renderer = "success"
+  [commands.s-c-m-integrations-import-keys]
+    service = "SCMIntegrationsService"
+    method = "SCMIntegrationsImportKeys"
+    use = "import-keys"
+    flags = ["id"]
+    returns = "[]Key"
+    renderer = "table"
+  [commands.s-c-m-integrations-list]
+    service = "SCMIntegrationsService"
+    method = "SCMIntegrationsList"
+    use = "list"
+    returns = "[]SCMIntegration"
+    renderer = "table"
+  [commands.s-c-m-integrations-show]
+    service = "SCMIntegrationsService"
+    method = "SCMIntegrationsShow"
+    use = "show"
+    flags = ["id"]
+    returns = "*SCMIntegration"
+    renderer = "detail"
+  [commands.s-c-m-repo-link-create]
+    service = "SCMRepoLinkService"
+    method = "SCMRepoLinkCreate"
+    use = "create"
+    flags = ["app", "params"]
+    returns = "*SCMRepoLink"
+    renderer = "detail"
+  [commands.s-c-m-repo-link-delete]
+    service = "SCMRepoLinkService"
+    method = "SCMRepoLinkDelete"
+    use = "delete"
+    flags = ["app"]
+    returns = ""
+    renderer = "success"
+  [commands.s-c-m-repo-link-deployments]
+    service = "SCMRepoLinkService"
+    method = "SCMRepoLinkDeployments"
+    use = "deployments"
+    flags = ["app"]
+    returns = "[]*Deployment"
+    renderer = "table"
+  [commands.s-c-m-repo-link-list]
+    service = "SCMRepoLinkService"
+    method = "SCMRepoLinkList"
+    use = "list"
+    flags = ["opts"]
+    returns = "[]*SCMRepoLink"
+    renderer = "table"
+  [commands.s-c-m-repo-link-manual-deploy]
+    service = "SCMRepoLinkService"
+    method = "SCMRepoLinkManualDeploy"
+    use = "manual-deploy"
+    flags = ["app"]
+    returns = "*Deployment"
+    renderer = "detail"
+  [commands.s-c-m-repo-link-manual-review-app]
+    service = "SCMRepoLinkService"
+    method = "SCMRepoLinkManualReviewApp"
+    use = "manual-review-app"
+    flags = ["app"]
+    returns = ""
+    renderer = "success"
+  [commands.s-c-m-repo-link-pull-request]
+    service = "SCMRepoLinkService"
+    method = "SCMRepoLinkPullRequest"
+    use = "pull-request"
+    flags = ["app", "number"]
+    returns = "*RepoLinkPullRequest"
+    renderer = "detail"
+  [commands.s-c-m-repo-link-review-apps]
+    service = "SCMRepoLinkService"
+    method = "SCMRepoLinkReviewApps"
+    use = "review-apps"
+    flags = ["app"]
+    returns = "[]*ReviewApp"
+    renderer = "table"
+  [commands.s-c-m-repo-link-show]
+    service = "SCMRepoLinkService"
+    method = "SCMRepoLinkShow"
+    use = "show"
+    flags = ["app"]
+    returns = "*SCMRepoLink"
+    renderer = "detail"
+  [commands.s-c-m-repo-link-update]
+    service = "SCMRepoLinkService"
+    method = "SCMRepoLinkUpdate"
+    use = "update"
+    flags = ["app", "params"]
+    returns = "*SCMRepoLink"
+    renderer = "detail"
+  [commands.sign-up-]
+    service = "SignUpService"
+    method = "SignUp"
+    use = ""
+    flags = ["email"]
+    returns = ""
+    renderer = "success"
+  [commands.sources-create]
+    service = "SourcesService"
+    method = "SourcesCreate"
+    use = "create"
+    returns = "*Source"
+    renderer = "detail"
+  [commands.stacks-list]
+    service = "StacksService"
+    method = "StacksList"
+    use = "list"
+    returns = "[]Stack"
+    renderer = "table"
+  [commands.tokens-list]
+    service = "TokensService"
+    method = "TokensList"
+    use = "list"
+    returns = "Tokens"
+    renderer = "success"
+  [commands.tokens-token-create]
+    service = "TokensService"
+    method = "TokenCreate"
+    use = "token-create"
+    flags = ["params"]
+    returns = "Token"
+    renderer = "success"
+  [commands.tokens-token-exchange]
+    service = "TokensService"
+    method = "TokenExchange"
+    use = "token-exchange"
+    flags = ["token"]
+    returns = "string"
+    renderer = "success"
+  [commands.tokens-token-show]
+    service = "TokensService"
+    method = "TokenShow"
+    use = "token-show"
+    flags = ["id"]
+    returns = "Token"
+    renderer = "success"
+  [commands.users-self]
+    service = "UsersService"
+    method = "Self"
+    use = "self"
+    returns = "*User"
+    renderer = "detail"
+  [commands.users-update-user]
+    service = "UsersService"
+    method = "UpdateUser"
+    use = "update-user"
+    flags = ["params"]
+    returns = "*User"
+    renderer = "detail"
+  [commands.users-user-stop-free-trial]
+    service = "UsersService"
+    method = "UserStopFreeTrial"
+    use = "user-stop-free-trial"
+    returns = ""
+    renderer = "success"
+  [commands.variables-list]
+    service = "VariablesService"
+    method = "VariablesList"
+    use = "list"
+    flags = ["app"]
+    returns = "Variables"
+    renderer = "success"
+  [commands.variables-list-without-alias]
+    service = "VariablesService"
+    method = "VariablesListWithoutAlias"
+    use = "list-without-alias"
+    flags = ["app"]
+    returns = "Variables"
+    renderer = "success"
+  [commands.variables-variable-multiple-set]
+    service = "VariablesService"
+    method = "VariableMultipleSet"
+    use = "variable-multiple-set"
+    flags = ["app", "variables"]
+    returns = "Variables"
+    renderer = "success"
+  [commands.variables-variable-set]
+    service = "VariablesService"
+    method = "VariableSet"
+    use = "variable-set"
+    flags = ["app", "name", "value"]
+    returns = "*Variable"
+    renderer = "detail"
+  [commands.variables-variable-unset]
+    service = "VariablesService"
+    method = "VariableUnset"
+    use = "variable-unset"
+    flags = ["app", "id"]
+    returns = ""
+    renderer = "success"
