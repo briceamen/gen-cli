@@ -12,83 +12,142 @@ sdk_version = ""
 
     [[services.AddonProvidersService.methods]]
       name = "AddonProviderPlansList"
-      params = ["string"]
       returns = "[]*Plan"
       generated = true
+
+      [[services.AddonProvidersService.methods.params]]
+        name = "addon"
+        type = "string"
   [services.AddonsService]
 
     [[services.AddonsService.methods]]
       name = "AddonsList"
-      params = ["string"]
       returns = "[]*Addon"
       generated = true
 
+      [[services.AddonsService.methods.params]]
+        name = "app"
+        type = "string"
+
     [[services.AddonsService.methods]]
       name = "AddonProvision"
-      params = ["string", "AddonProvisionParams"]
       returns = "AddonRes"
       generated = true
+
+      [[services.AddonsService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.AddonsService.methods.params]]
+        name = "params"
+        type = "AddonProvisionParams"
 
     [[services.AddonsService.methods]]
       name = "AddonDestroy"
-      params = ["string"]
       returns = ""
       generated = true
 
+      [[services.AddonsService.methods.params]]
+        name = "app"
+        type = "string"
+
     [[services.AddonsService.methods]]
       name = "AddonUpgrade"
-      params = ["string", "AddonUpgradeParams"]
       returns = "AddonRes"
       generated = true
 
+      [[services.AddonsService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.AddonsService.methods.params]]
+        name = "params"
+        type = "AddonUpgradeParams"
+
     [[services.AddonsService.methods]]
       name = "AddonToken"
-      params = ["string"]
       returns = "string"
       generated = true
+
+      [[services.AddonsService.methods.params]]
+        name = "app"
+        type = "string"
 
     [[services.AddonsService.methods]]
       name = "AddonLogsURL"
-      params = ["string"]
       returns = "string"
       generated = true
 
+      [[services.AddonsService.methods.params]]
+        name = "app"
+        type = "string"
+
     [[services.AddonsService.methods]]
       name = "AddonLogsArchives"
-      params = ["string", "int"]
       returns = "*LogsArchivesResponse"
       generated = true
+
+      [[services.AddonsService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.AddonsService.methods.params]]
+        name = "page"
+        type = "int"
   [services.AlertsService]
 
     [[services.AlertsService.methods]]
       name = "AlertsList"
-      params = ["string"]
       returns = "[]*Alert"
       generated = true
 
+      [[services.AlertsService.methods.params]]
+        name = "app"
+        type = "string"
+
     [[services.AlertsService.methods]]
       name = "AlertAdd"
-      params = ["string", "AlertAddParams"]
       returns = "*Alert"
       generated = true
+
+      [[services.AlertsService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.AlertsService.methods.params]]
+        name = "params"
+        type = "AlertAddParams"
 
     [[services.AlertsService.methods]]
       name = "AlertShow"
-      params = ["string"]
       returns = "*Alert"
       generated = true
+
+      [[services.AlertsService.methods.params]]
+        name = "app"
+        type = "string"
 
     [[services.AlertsService.methods]]
       name = "AlertUpdate"
-      params = ["string", "AlertUpdateParams"]
       returns = "*Alert"
       generated = true
 
+      [[services.AlertsService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.AlertsService.methods.params]]
+        name = "params"
+        type = "AlertUpdateParams"
+
     [[services.AlertsService.methods]]
       name = "AlertRemove"
-      params = ["string"]
       returns = ""
       generated = true
+
+      [[services.AlertsService.methods.params]]
+        name = "app"
+        type = "string"
   [services.AppsService]
 
     [[services.AppsService.methods]]
@@ -99,156 +158,283 @@ sdk_version = ""
 
     [[services.AppsService.methods]]
       name = "AppsShow"
-      params = ["string"]
       returns = "*App"
       generated = true
+
+      [[services.AppsService.methods.params]]
+        name = "appName"
+        type = "string"
 
     [[services.AppsService.methods]]
       name = "AppsDestroy"
-      params = ["string", "string"]
       returns = ""
       generated = true
 
+      [[services.AppsService.methods.params]]
+        name = "name"
+        type = "string"
+
+      [[services.AppsService.methods.params]]
+        name = "currentName"
+        type = "string"
+
     [[services.AppsService.methods]]
       name = "AppsRename"
-      params = ["string", "string"]
       returns = "*App"
       generated = true
+
+      [[services.AppsService.methods.params]]
+        name = "name"
+        type = "string"
+
+      [[services.AppsService.methods.params]]
+        name = "newName"
+        type = "string"
 
     [[services.AppsService.methods]]
       name = "AppsTransfer"
-      params = ["string", "string"]
       returns = "*App"
       generated = true
+
+      [[services.AppsService.methods.params]]
+        name = "name"
+        type = "string"
+
+      [[services.AppsService.methods.params]]
+        name = "email"
+        type = "string"
 
     [[services.AppsService.methods]]
       name = "AppsSetStack"
-      params = ["string", "string"]
       returns = "*App"
       generated = true
+
+      [[services.AppsService.methods.params]]
+        name = "name"
+        type = "string"
+
+      [[services.AppsService.methods.params]]
+        name = "stackID"
+        type = "string"
 
     [[services.AppsService.methods]]
       name = "AppsRestart"
-      params = ["string", "*AppsRestartParams"]
       returns = "*http.Response"
       generated = true
+
+      [[services.AppsService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.AppsService.methods.params]]
+        name = "scope"
+        type = "*AppsRestartParams"
 
     [[services.AppsService.methods]]
       name = "AppsCreate"
-      params = ["AppsCreateOpts"]
       returns = "*App"
       generated = true
+
+      [[services.AppsService.methods.params]]
+        name = "opts"
+        type = "AppsCreateOpts"
 
     [[services.AppsService.methods]]
       name = "AppsStats"
-      params = ["string"]
       returns = "*AppStatsRes"
       generated = true
 
+      [[services.AppsService.methods.params]]
+        name = "app"
+        type = "string"
+
     [[services.AppsService.methods]]
       name = "AppsContainerTypes"
-      params = ["string"]
       returns = "[]ContainerType"
       generated = true
 
+      [[services.AppsService.methods.params]]
+        name = "app"
+        type = "string"
+
     [[services.AppsService.methods]]
       name = "AppsContainersPs"
-      params = ["string"]
       returns = "[]Container"
       generated = true
 
+      [[services.AppsService.methods.params]]
+        name = "app"
+        type = "string"
+
     [[services.AppsService.methods]]
       name = "AppsScale"
-      params = ["string", "*AppsScaleParams"]
       returns = "*http.Response"
       generated = true
 
+      [[services.AppsService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.AppsService.methods.params]]
+        name = "params"
+        type = "*AppsScaleParams"
+
     [[services.AppsService.methods]]
       name = "AppsForceHTTPS"
-      params = ["string", "bool"]
       returns = "*App"
       generated = true
+
+      [[services.AppsService.methods.params]]
+        name = "name"
+        type = "string"
+
+      [[services.AppsService.methods.params]]
+        name = "enable"
+        type = "bool"
 
     [[services.AppsService.methods]]
       name = "AppsStickySession"
-      params = ["string", "bool"]
       returns = "*App"
       generated = true
 
+      [[services.AppsService.methods.params]]
+        name = "name"
+        type = "string"
+
+      [[services.AppsService.methods.params]]
+        name = "enable"
+        type = "bool"
+
     [[services.AppsService.methods]]
       name = "AppsRouterLogs"
-      params = ["string", "bool"]
       returns = "*App"
       generated = true
+
+      [[services.AppsService.methods.params]]
+        name = "name"
+        type = "string"
+
+      [[services.AppsService.methods.params]]
+        name = "enable"
+        type = "bool"
   [services.AutoscalersService]
 
     [[services.AutoscalersService.methods]]
       name = "AutoscalersList"
-      params = ["string"]
       returns = "[]Autoscaler"
       generated = true
 
+      [[services.AutoscalersService.methods.params]]
+        name = "app"
+        type = "string"
+
     [[services.AutoscalersService.methods]]
       name = "AutoscalerAdd"
-      params = ["string", "AutoscalerAddParams"]
       returns = "*Autoscaler"
       generated = true
 
+      [[services.AutoscalersService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.AutoscalersService.methods.params]]
+        name = "params"
+        type = "AutoscalerAddParams"
+
     [[services.AutoscalersService.methods]]
       name = "AutoscalerRemove"
-      params = ["string", "string"]
       returns = ""
       generated = true
+
+      [[services.AutoscalersService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.AutoscalersService.methods.params]]
+        name = "id"
+        type = "string"
   [services.BackupsService]
 
     [[services.BackupsService.methods]]
       name = "BackupList"
-      params = ["string"]
       returns = "[]Backup"
       generated = true
 
+      [[services.BackupsService.methods.params]]
+        name = "app"
+        type = "string"
+
     [[services.BackupsService.methods]]
       name = "BackupCreate"
-      params = ["string"]
       returns = "*Backup"
       generated = true
+
+      [[services.BackupsService.methods.params]]
+        name = "app"
+        type = "string"
 
     [[services.BackupsService.methods]]
       name = "BackupShow"
-      params = ["string"]
       returns = "*Backup"
       generated = true
 
+      [[services.BackupsService.methods.params]]
+        name = "app"
+        type = "string"
+
     [[services.BackupsService.methods]]
       name = "BackupDownloadURL"
-      params = ["string"]
       returns = "string"
       generated = true
+
+      [[services.BackupsService.methods.params]]
+        name = "app"
+        type = "string"
   [services.CollaboratorsService]
 
     [[services.CollaboratorsService.methods]]
       name = "CollaboratorsList"
-      params = ["string"]
       returns = "[]Collaborator"
       generated = true
 
+      [[services.CollaboratorsService.methods.params]]
+        name = "app"
+        type = "string"
+
     [[services.CollaboratorsService.methods]]
       name = "CollaboratorAdd"
-      params = ["string", "CollaboratorAddParams"]
       returns = "Collaborator"
       generated = true
+
+      [[services.CollaboratorsService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.CollaboratorsService.methods.params]]
+        name = "params"
+        type = "CollaboratorAddParams"
 
     [[services.CollaboratorsService.methods]]
       name = "CollaboratorRemove"
-      params = ["string"]
       returns = ""
       generated = true
 
+      [[services.CollaboratorsService.methods.params]]
+        name = "app"
+        type = "string"
+
     [[services.CollaboratorsService.methods]]
       name = "CollaboratorUpdate"
-      params = ["string", "CollaboratorUpdateParams"]
       returns = "Collaborator"
       generated = true
+
+      [[services.CollaboratorsService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.CollaboratorsService.methods.params]]
+        name = "params"
+        type = "CollaboratorUpdateParams"
   [services.ContainerSizesService]
 
     [[services.ContainerSizesService.methods]]
@@ -260,23 +446,32 @@ sdk_version = ""
 
     [[services.ContainersService.methods]]
       name = "ContainersStop"
-      params = ["string"]
       returns = ""
       generated = true
+
+      [[services.ContainersService.methods.params]]
+        name = "appName"
+        type = "string"
   [services.CronTasksService]
 
     [[services.CronTasksService.methods]]
       name = "CronTasksGet"
-      params = ["string"]
       returns = "CronTasks"
       generated = true
+
+      [[services.CronTasksService.methods.params]]
+        name = "app"
+        type = "string"
   [services.DatabasesPreviewService]
 
     [[services.DatabasesPreviewService.methods]]
       name = "DatabaseCreate"
-      params = ["DatabaseCreateParams"]
       returns = "DatabaseNG"
       generated = true
+
+      [[services.DatabasesPreviewService.methods.params]]
+        name = "params"
+        type = "DatabaseCreateParams"
 
     [[services.DatabasesPreviewService.methods]]
       name = "DatabasesList"
@@ -286,144 +481,253 @@ sdk_version = ""
 
     [[services.DatabasesPreviewService.methods]]
       name = "DatabaseShow"
-      params = ["string"]
       returns = "DatabaseNG"
       generated = true
 
+      [[services.DatabasesPreviewService.methods.params]]
+        name = "appID"
+        type = "string"
+
     [[services.DatabasesPreviewService.methods]]
       name = "DatabaseDestroy"
-      params = ["string"]
       returns = ""
       generated = true
+
+      [[services.DatabasesPreviewService.methods.params]]
+        name = "appID"
+        type = "string"
   [services.DatabasesService]
 
     [[services.DatabasesService.methods]]
       name = "DatabaseShow"
-      params = ["string"]
       returns = "Database"
       generated = true
+
+      [[services.DatabasesService.methods.params]]
+        name = "app"
+        type = "string"
 
     [[services.DatabasesService.methods]]
       name = "DatabaseEnableFeature"
-      params = ["string"]
       returns = "DatabaseEnableFeatureResponse"
       generated = true
 
+      [[services.DatabasesService.methods.params]]
+        name = "app"
+        type = "string"
+
     [[services.DatabasesService.methods]]
       name = "DatabaseDisableFeature"
-      params = ["string"]
       returns = "DatabaseDisableFeatureResponse"
       generated = true
 
+      [[services.DatabasesService.methods.params]]
+        name = "app"
+        type = "string"
+
     [[services.DatabasesService.methods]]
       name = "DatabaseUpdatePeriodicBackupsConfig"
-      params = ["string", "DatabaseUpdatePeriodicBackupsConfigParams"]
       returns = "Database"
       generated = true
+
+      [[services.DatabasesService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.DatabasesService.methods.params]]
+        name = "params"
+        type = "DatabaseUpdatePeriodicBackupsConfigParams"
 
     [[services.DatabasesService.methods]]
       name = "DatabaseUpdateMaintenanceWindow"
-      params = ["string", "MaintenanceWindowParams"]
       returns = "Database"
       generated = true
 
+      [[services.DatabasesService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.DatabasesService.methods.params]]
+        name = "params"
+        type = "MaintenanceWindowParams"
+
     [[services.DatabasesService.methods]]
       name = "DatabaseListMaintenance"
-      params = ["string", "PaginationOpts"]
       returns = "[]*Maintenance"
       generated = true
 
+      [[services.DatabasesService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.DatabasesService.methods.params]]
+        name = "opts"
+        type = "PaginationOpts"
+
     [[services.DatabasesService.methods]]
       name = "DatabaseShowMaintenance"
-      params = ["string"]
       returns = "Maintenance"
       generated = true
+
+      [[services.DatabasesService.methods.params]]
+        name = "app"
+        type = "string"
   [services.DeploymentsService]
 
     [[services.DeploymentsService.methods]]
       name = "DeploymentList"
-      params = ["string"]
       returns = "[]*Deployment"
       generated = true
+
+      [[services.DeploymentsService.methods.params]]
+        name = "app"
+        type = "string"
 
     [[services.DeploymentsService.methods]]
       name = "DeploymentListWithPagination"
-      params = ["string", "PaginationOpts"]
       returns = "[]*Deployment"
       generated = true
 
+      [[services.DeploymentsService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.DeploymentsService.methods.params]]
+        name = "opts"
+        type = "PaginationOpts"
+
     [[services.DeploymentsService.methods]]
       name = "Deployment"
-      params = ["string", "string"]
       returns = "*Deployment"
       generated = true
+
+      [[services.DeploymentsService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.DeploymentsService.methods.params]]
+        name = "deploy"
+        type = "string"
 
     [[services.DeploymentsService.methods]]
       name = "DeploymentLogs"
-      params = ["string"]
       returns = "*http.Response"
       generated = true
 
+      [[services.DeploymentsService.methods.params]]
+        name = "deployURL"
+        type = "string"
+
     [[services.DeploymentsService.methods]]
       name = "DeploymentStream"
-      params = ["string"]
       returns = "*websocket.Conn"
       generated = true
 
+      [[services.DeploymentsService.methods.params]]
+        name = "deployURL"
+        type = "string"
+
     [[services.DeploymentsService.methods]]
       name = "DeploymentsCreate"
-      params = ["string", "*DeploymentsCreateParams"]
       returns = "*Deployment"
       generated = true
+
+      [[services.DeploymentsService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.DeploymentsService.methods.params]]
+        name = "params"
+        type = "*DeploymentsCreateParams"
   [services.DomainsService]
 
     [[services.DomainsService.methods]]
       name = "DomainsList"
-      params = ["string"]
       returns = "[]Domain"
       generated = true
 
+      [[services.DomainsService.methods.params]]
+        name = "app"
+        type = "string"
+
     [[services.DomainsService.methods]]
       name = "DomainsAdd"
-      params = ["string", "DomainsAddParams"]
       returns = "Domain"
       generated = true
+
+      [[services.DomainsService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.DomainsService.methods.params]]
+        name = "d"
+        type = "DomainsAddParams"
 
     [[services.DomainsService.methods]]
       name = "DomainsUpdate"
-      params = ["string", "string", "DomainsUpdateParams"]
       returns = "Domain"
       generated = true
+
+      [[services.DomainsService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.DomainsService.methods.params]]
+        name = "id"
+        type = "string"
+
+      [[services.DomainsService.methods.params]]
+        name = "d"
+        type = "DomainsUpdateParams"
 
     [[services.DomainsService.methods]]
       name = "DomainsRemove"
-      params = ["string", "string"]
       returns = ""
       generated = true
 
+      [[services.DomainsService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.DomainsService.methods.params]]
+        name = "id"
+        type = "string"
+
     [[services.DomainsService.methods]]
       name = "DomainSetCanonical"
-      params = ["string"]
       returns = "Domain"
       generated = true
+
+      [[services.DomainsService.methods.params]]
+        name = "app"
+        type = "string"
 
     [[services.DomainsService.methods]]
       name = "DomainUnsetCanonical"
-      params = ["string"]
       returns = "Domain"
       generated = true
+
+      [[services.DomainsService.methods.params]]
+        name = "app"
+        type = "string"
 
     [[services.DomainsService.methods]]
       name = "DomainSetCertificate"
-      params = ["string"]
       returns = "Domain"
       generated = true
 
+      [[services.DomainsService.methods.params]]
+        name = "app"
+        type = "string"
+
     [[services.DomainsService.methods]]
       name = "DomainUnsetCertificate"
-      params = ["string"]
       returns = "Domain"
       generated = true
+
+      [[services.DomainsService.methods.params]]
+        name = "app"
+        type = "string"
   [services.EventsService]
 
     [[services.EventsService.methods]]
@@ -440,28 +744,44 @@ sdk_version = ""
 
     [[services.EventsService.methods]]
       name = "EventsList"
-      params = ["string", "PaginationOpts"]
       returns = "Events"
       generated = true
 
+      [[services.EventsService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.EventsService.methods.params]]
+        name = "opts"
+        type = "PaginationOpts"
+
     [[services.EventsService.methods]]
       name = "UserEventsList"
-      params = ["PaginationOpts"]
       returns = "Events"
       generated = true
+
+      [[services.EventsService.methods.params]]
+        name = "opts"
+        type = "PaginationOpts"
   [services.InvoicesService]
 
     [[services.InvoicesService.methods]]
       name = "InvoicesList"
-      params = ["PaginationOpts"]
       returns = "Invoices"
       generated = true
 
+      [[services.InvoicesService.methods.params]]
+        name = "opts"
+        type = "PaginationOpts"
+
     [[services.InvoicesService.methods]]
       name = "InvoiceShow"
-      params = ["string"]
       returns = "*Invoice"
       generated = true
+
+      [[services.InvoicesService.methods.params]]
+        name = "string"
+        type = "string"
   [services.KeysService]
 
     [[services.KeysService.methods]]
@@ -472,78 +792,154 @@ sdk_version = ""
 
     [[services.KeysService.methods]]
       name = "KeysAdd"
-      params = ["string", "string"]
       returns = "*Key"
       generated = true
 
+      [[services.KeysService.methods.params]]
+        name = "name"
+        type = "string"
+
+      [[services.KeysService.methods.params]]
+        name = "content"
+        type = "string"
+
     [[services.KeysService.methods]]
       name = "KeysDelete"
-      params = ["string"]
       returns = ""
       generated = true
+
+      [[services.KeysService.methods.params]]
+        name = "id"
+        type = "string"
   [services.LogDrainsService]
 
     [[services.LogDrainsService.methods]]
       name = "LogDrainsList"
-      params = ["string"]
       returns = "[]LogDrain"
       generated = true
+
+      [[services.LogDrainsService.methods.params]]
+        name = "app"
+        type = "string"
 
     [[services.LogDrainsService.methods]]
       name = "LogDrainAdd"
-      params = ["string", "LogDrainAddParams"]
       returns = "*LogDrainRes"
       generated = true
+
+      [[services.LogDrainsService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.LogDrainsService.methods.params]]
+        name = "params"
+        type = "LogDrainAddParams"
 
     [[services.LogDrainsService.methods]]
       name = "LogDrainRemove"
-      params = ["string"]
       returns = ""
       generated = true
+
+      [[services.LogDrainsService.methods.params]]
+        name = "app"
+        type = "string"
 
     [[services.LogDrainsService.methods]]
       name = "LogDrainAddonRemove"
-      params = ["string", "string"]
       returns = ""
       generated = true
 
+      [[services.LogDrainsService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.LogDrainsService.methods.params]]
+        name = "URL"
+        type = "string"
+
     [[services.LogDrainsService.methods]]
       name = "LogDrainsAddonList"
-      params = ["string", "string"]
       returns = "[]LogDrain"
       generated = true
 
+      [[services.LogDrainsService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.LogDrainsService.methods.params]]
+        name = "addonID"
+        type = "string"
+
     [[services.LogDrainsService.methods]]
       name = "LogDrainAddonAdd"
-      params = ["string", "string", "LogDrainAddParams"]
       returns = "*LogDrainRes"
       generated = true
+
+      [[services.LogDrainsService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.LogDrainsService.methods.params]]
+        name = "addonID"
+        type = "string"
+
+      [[services.LogDrainsService.methods.params]]
+        name = "params"
+        type = "LogDrainAddParams"
   [services.LogsArchivesService]
 
     [[services.LogsArchivesService.methods]]
       name = "LogsArchivesByCursor"
-      params = ["string", "string"]
       returns = "*LogsArchivesResponse"
       generated = true
 
+      [[services.LogsArchivesService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.LogsArchivesService.methods.params]]
+        name = "cursor"
+        type = "string"
+
     [[services.LogsArchivesService.methods]]
       name = "LogsArchives"
-      params = ["string", "int"]
       returns = "*LogsArchivesResponse"
       generated = true
+
+      [[services.LogsArchivesService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.LogsArchivesService.methods.params]]
+        name = "page"
+        type = "int"
   [services.LogsService]
 
     [[services.LogsService.methods]]
       name = "LogsURL"
-      params = ["string"]
       returns = "*http.Response"
       generated = true
 
+      [[services.LogsService.methods.params]]
+        name = "app"
+        type = "string"
+
     [[services.LogsService.methods]]
       name = "Logs"
-      params = ["string", "int", "string"]
       returns = "*http.Response"
       generated = true
+
+      [[services.LogsService.methods.params]]
+        name = "logsURL"
+        type = "string"
+
+      [[services.LogsService.methods.params]]
+        name = "n"
+        type = "int"
+
+      [[services.LogsService.methods.params]]
+        name = "filter"
+        type = "string"
   [services.NotificationPlatformsService]
 
     [[services.NotificationPlatformsService.methods]]
@@ -554,54 +950,94 @@ sdk_version = ""
 
     [[services.NotificationPlatformsService.methods]]
       name = "NotificationPlatformByName"
-      params = ["string"]
       returns = "[]*NotificationPlatform"
       generated = true
+
+      [[services.NotificationPlatformsService.methods.params]]
+        name = "name"
+        type = "string"
   [services.NotifiersService]
 
     [[services.NotifiersService.methods]]
       name = "NotifiersList"
-      params = ["string"]
       returns = "Notifiers"
       generated = true
 
+      [[services.NotifiersService.methods.params]]
+        name = "app"
+        type = "string"
+
     [[services.NotifiersService.methods]]
       name = "NotifierProvision"
-      params = ["string", "NotifierParams"]
       returns = "*Notifier"
       generated = true
+
+      [[services.NotifiersService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.NotifiersService.methods.params]]
+        name = "params"
+        type = "NotifierParams"
 
     [[services.NotifiersService.methods]]
       name = "NotifierByID"
-      params = ["string"]
       returns = "*Notifier"
       generated = true
+
+      [[services.NotifiersService.methods.params]]
+        name = "app"
+        type = "string"
 
     [[services.NotifiersService.methods]]
       name = "NotifierUpdate"
-      params = ["string", "NotifierParams"]
       returns = "*Notifier"
       generated = true
 
+      [[services.NotifiersService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.NotifiersService.methods.params]]
+        name = "params"
+        type = "NotifierParams"
+
     [[services.NotifiersService.methods]]
       name = "NotifierDestroy"
-      params = ["string"]
       returns = ""
       generated = true
+
+      [[services.NotifiersService.methods.params]]
+        name = "app"
+        type = "string"
   [services.OperationsService]
 
     [[services.OperationsService.methods]]
       name = "OperationsShow"
-      params = ["string"]
       returns = "*Operation"
       generated = true
+
+      [[services.OperationsService.methods.params]]
+        name = "app"
+        type = "string"
   [services.PrivateNetworksService]
 
     [[services.PrivateNetworksService.methods]]
       name = "PrivateNetworksDomainsList"
-      params = ["string", "uint", "uint"]
       returns = "unknown"
       generated = true
+
+      [[services.PrivateNetworksService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.PrivateNetworksService.methods.params]]
+        name = "page"
+        type = "uint"
+
+      [[services.PrivateNetworksService.methods.params]]
+        name = "perPage"
+        type = "uint"
   [services.ProjectsService]
 
     [[services.ProjectsService.methods]]
@@ -612,27 +1048,52 @@ sdk_version = ""
 
     [[services.ProjectsService.methods]]
       name = "ProjectAdd"
-      params = ["ProjectAddParams"]
       returns = "Project"
       generated = true
+
+      [[services.ProjectsService.methods.params]]
+        name = "params"
+        type = "ProjectAddParams"
 
     [[services.ProjectsService.methods]]
       name = "ProjectUpdate"
-      params = ["string", "ProjectUpdateParams"]
       returns = "Project"
       generated = true
+
+      [[services.ProjectsService.methods.params]]
+        name = "projectID"
+        type = "string"
+
+      [[services.ProjectsService.methods.params]]
+        name = "params"
+        type = "ProjectUpdateParams"
 
     [[services.ProjectsService.methods]]
       name = "ProjectGet"
-      params = ["string"]
       returns = "Project"
       generated = true
 
+      [[services.ProjectsService.methods.params]]
+        name = "projectID"
+        type = "string"
+
     [[services.ProjectsService.methods]]
       name = "ProjectDelete"
-      params = ["string"]
       returns = ""
       generated = true
+
+      [[services.ProjectsService.methods.params]]
+        name = "projectID"
+        type = "string"
+
+    [[services.ProjectsService.methods]]
+      name = "ProjectPrivateNetworkGet"
+      returns = "ProjectPrivateNetwork"
+      generated = true
+
+      [[services.ProjectsService.methods.params]]
+        name = "projectID"
+        type = "string"
   [services.RegionsService]
 
     [[services.RegionsService.methods]]
@@ -644,9 +1105,12 @@ sdk_version = ""
 
     [[services.RunsService.methods]]
       name = "Run"
-      params = ["RunOpts"]
       returns = "*RunRes"
       generated = true
+
+      [[services.RunsService.methods.params]]
+        name = "opts"
+        type = "RunOpts"
   [services.SCMIntegrationsService]
 
     [[services.SCMIntegrationsService.methods]]
@@ -657,95 +1121,160 @@ sdk_version = ""
 
     [[services.SCMIntegrationsService.methods]]
       name = "SCMIntegrationsShow"
-      params = ["string"]
       returns = "*SCMIntegration"
       generated = true
+
+      [[services.SCMIntegrationsService.methods.params]]
+        name = "id"
+        type = "string"
 
     [[services.SCMIntegrationsService.methods]]
       name = "SCMIntegrationsCreate"
-      params = ["SCMType", "string", "string"]
       returns = "*SCMIntegration"
       generated = true
 
+      [[services.SCMIntegrationsService.methods.params]]
+        name = "scmType"
+        type = "SCMType"
+
+      [[services.SCMIntegrationsService.methods.params]]
+        name = "url"
+        type = "string"
+
+      [[services.SCMIntegrationsService.methods.params]]
+        name = "accessToken"
+        type = "string"
+
     [[services.SCMIntegrationsService.methods]]
       name = "SCMIntegrationsDelete"
-      params = ["string"]
       returns = ""
       generated = true
 
+      [[services.SCMIntegrationsService.methods.params]]
+        name = "id"
+        type = "string"
+
     [[services.SCMIntegrationsService.methods]]
       name = "SCMIntegrationsImportKeys"
-      params = ["string"]
       returns = "[]Key"
       generated = true
+
+      [[services.SCMIntegrationsService.methods.params]]
+        name = "id"
+        type = "string"
   [services.SCMRepoLinkService]
 
     [[services.SCMRepoLinkService.methods]]
       name = "SCMRepoLinkList"
-      params = ["PaginationOpts"]
       returns = "[]*SCMRepoLink"
       generated = true
 
+      [[services.SCMRepoLinkService.methods.params]]
+        name = "opts"
+        type = "PaginationOpts"
+
     [[services.SCMRepoLinkService.methods]]
       name = "SCMRepoLinkShow"
-      params = ["string"]
       returns = "*SCMRepoLink"
       generated = true
+
+      [[services.SCMRepoLinkService.methods.params]]
+        name = "app"
+        type = "string"
 
     [[services.SCMRepoLinkService.methods]]
       name = "SCMRepoLinkCreate"
-      params = ["string", "SCMRepoLinkCreateParams"]
       returns = "*SCMRepoLink"
       generated = true
+
+      [[services.SCMRepoLinkService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.SCMRepoLinkService.methods.params]]
+        name = "params"
+        type = "SCMRepoLinkCreateParams"
 
     [[services.SCMRepoLinkService.methods]]
       name = "SCMRepoLinkUpdate"
-      params = ["string", "SCMRepoLinkUpdateParams"]
       returns = "*SCMRepoLink"
       generated = true
 
+      [[services.SCMRepoLinkService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.SCMRepoLinkService.methods.params]]
+        name = "params"
+        type = "SCMRepoLinkUpdateParams"
+
     [[services.SCMRepoLinkService.methods]]
       name = "SCMRepoLinkDelete"
-      params = ["string"]
       returns = ""
       generated = true
+
+      [[services.SCMRepoLinkService.methods.params]]
+        name = "app"
+        type = "string"
 
     [[services.SCMRepoLinkService.methods]]
       name = "SCMRepoLinkPullRequest"
-      params = ["string", "int"]
       returns = "*RepoLinkPullRequest"
       generated = true
 
+      [[services.SCMRepoLinkService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.SCMRepoLinkService.methods.params]]
+        name = "number"
+        type = "int"
+
     [[services.SCMRepoLinkService.methods]]
       name = "SCMRepoLinkManualDeploy"
-      params = ["string"]
       returns = "*Deployment"
       generated = true
 
+      [[services.SCMRepoLinkService.methods.params]]
+        name = "app"
+        type = "string"
+
     [[services.SCMRepoLinkService.methods]]
       name = "SCMRepoLinkManualReviewApp"
-      params = ["string"]
       returns = ""
       generated = true
 
+      [[services.SCMRepoLinkService.methods.params]]
+        name = "app"
+        type = "string"
+
     [[services.SCMRepoLinkService.methods]]
       name = "SCMRepoLinkDeployments"
-      params = ["string"]
       returns = "[]*Deployment"
       generated = true
 
+      [[services.SCMRepoLinkService.methods.params]]
+        name = "app"
+        type = "string"
+
     [[services.SCMRepoLinkService.methods]]
       name = "SCMRepoLinkReviewApps"
-      params = ["string"]
       returns = "[]*ReviewApp"
       generated = true
+
+      [[services.SCMRepoLinkService.methods.params]]
+        name = "app"
+        type = "string"
   [services.SignUpService]
 
     [[services.SignUpService.methods]]
       name = "SignUp"
-      params = ["string"]
       returns = ""
       generated = true
+
+      [[services.SignUpService.methods.params]]
+        name = "email"
+        type = "string"
   [services.SourcesService]
 
     [[services.SourcesService.methods]]
@@ -770,21 +1299,30 @@ sdk_version = ""
 
     [[services.TokensService.methods]]
       name = "TokenCreate"
-      params = ["TokenCreateParams"]
       returns = "Token"
       generated = true
+
+      [[services.TokensService.methods.params]]
+        name = "params"
+        type = "TokenCreateParams"
 
     [[services.TokensService.methods]]
       name = "TokenExchange"
-      params = ["string"]
       returns = "string"
       generated = true
 
+      [[services.TokensService.methods.params]]
+        name = "token"
+        type = "string"
+
     [[services.TokensService.methods]]
       name = "TokenShow"
-      params = ["int"]
       returns = "Token"
       generated = true
+
+      [[services.TokensService.methods.params]]
+        name = "id"
+        type = "int"
   [services.UsersService]
 
     [[services.UsersService.methods]]
@@ -795,9 +1333,12 @@ sdk_version = ""
 
     [[services.UsersService.methods]]
       name = "UpdateUser"
-      params = ["UpdateUserParams"]
       returns = "*User"
       generated = true
+
+      [[services.UsersService.methods.params]]
+        name = "params"
+        type = "UpdateUserParams"
 
     [[services.UsersService.methods]]
       name = "UserStopFreeTrial"
@@ -808,30 +1349,61 @@ sdk_version = ""
 
     [[services.VariablesService.methods]]
       name = "VariablesList"
-      params = ["string"]
       returns = "Variables"
       generated = true
+
+      [[services.VariablesService.methods.params]]
+        name = "app"
+        type = "string"
 
     [[services.VariablesService.methods]]
       name = "VariablesListWithoutAlias"
-      params = ["string"]
       returns = "Variables"
       generated = true
+
+      [[services.VariablesService.methods.params]]
+        name = "app"
+        type = "string"
 
     [[services.VariablesService.methods]]
       name = "VariableSet"
-      params = ["string", "string", "string"]
       returns = "*Variable"
       generated = true
 
+      [[services.VariablesService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.VariablesService.methods.params]]
+        name = "name"
+        type = "string"
+
+      [[services.VariablesService.methods.params]]
+        name = "value"
+        type = "string"
+
     [[services.VariablesService.methods]]
       name = "VariableMultipleSet"
-      params = ["string", "Variables"]
       returns = "Variables"
       generated = true
 
+      [[services.VariablesService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.VariablesService.methods.params]]
+        name = "variables"
+        type = "Variables"
+
     [[services.VariablesService.methods]]
       name = "VariableUnset"
-      params = ["string", "string"]
       returns = ""
       generated = true
+
+      [[services.VariablesService.methods.params]]
+        name = "app"
+        type = "string"
+
+      [[services.VariablesService.methods.params]]
+        name = "id"
+        type = "string"

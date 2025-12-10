@@ -692,6 +692,13 @@ version = 1
     flags = ["project-i-d"]
     returns = "Project"
     renderer = "success"
+  [commands.projects-project-private-network-get]
+    service = "ProjectsService"
+    method = "ProjectPrivateNetworkGet"
+    use = "project-private-network-get"
+    flags = ["project-i-d"]
+    returns = "ProjectPrivateNetwork"
+    renderer = "success"
   [commands.projects-project-update]
     service = "ProjectsService"
     method = "ProjectUpdate"

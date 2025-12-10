@@ -9,3 +9,5 @@ generative-cli
 
 # OS
 .DS_Store
+
+vendor/

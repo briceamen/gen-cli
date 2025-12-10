@@ -187,6 +187,41 @@ func initprojectsProjectDeleteCmd() {
 	projectsProjectDeleteCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
 
+var projectsProjectPrivateNetworkGetCmd = &cobra.Command{
+	Use:   "project-private-network-get",
+	Short: "Projects project-private-network-get",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		ctx := context.Background()
+
+		client, err := scalingo.New(ctx, scalingo.ClientConfig{
+			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
+			Region:   os.Getenv("SCALINGO_REGION"),
+		})
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		projectID, _ := cmd.Flags().GetString("project-i-d")
+
+		// Method: ProjectPrivateNetworkGet
+		// This is a generated stub - implement the actual SDK call
+		_ = client
+		_ = projectID
+
+		fmt.Println(render.RenderInfo("Command 'project-private-network-get' is not yet fully implemented"))
+		fmt.Println(render.SubtitleStyle.Render("SDK method: client.ProjectPrivateNetworkGet(...)"))
+		return nil
+	},
+}
+
+func initprojectsProjectPrivateNetworkGetCmd() {
+
+	projectsProjectPrivateNetworkGetCmd.Flags().String("project-i-d", "", "projectID parameter")
+
+	projectsProjectPrivateNetworkGetCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
+}
+
 // RegisterProjectsServiceCommands registers all generated commands with the parent
 func RegisterProjectsServiceCommands(parent *cobra.Command) {
 	serviceCmd := &cobra.Command{
@@ -208,6 +243,9 @@ func RegisterProjectsServiceCommands(parent *cobra.Command) {
 
 	initprojectsProjectDeleteCmd()
 	serviceCmd.AddCommand(projectsProjectDeleteCmd)
+
+	initprojectsProjectPrivateNetworkGetCmd()
+	serviceCmd.AddCommand(projectsProjectPrivateNetworkGetCmd)
 
 	parent.AddCommand(serviceCmd)
 }

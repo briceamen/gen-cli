@@ -4,15 +4,22 @@ A proof-of-concept CLI generator that introspects the `go-scalingo` SDK and auto
 
 ## Concept
 
-Similar to how `sqlc generate` works for SQL, this tool parses the Go SDK interfaces and generates CLI commands automatically. When the SDK is updated with new endpoints, running `generative-cli generate` detects and scaffolds the missing commands.
+Similar to how `sqlc generate` works for SQL, this tool parses the Go SDK interfaces and generates CLI commands automatically. The manifest is the source of truth: run the generator CLI to record new SDK methods, then regenerate the code from that manifest (without overwriting your edits).
+
+There are two binaries:
+
+- **Generator CLI**: `./cmd/generator` → keeps the manifest up to date and regenerates code.
+- **Generated CLI**: `./cmd/runtime` → the actual CLI built from the generated command set.
 
 ## Architecture
 
 ```
 generative-cli/
 ├── cmd/
-│   ├── root.go           # Main Cobra root command
-│   └── generate.go       # `generate` subcommand
+│   ├── generator/        # Entry point for generator CLI (go run ./cmd/generator)
+│   └── runtime/          # Entry point for generated CLI (go run ./cmd/runtime)
+├── generatorcli/         # Generator commands (update-manifest, generate)
+├── runtimecli/           # Root command that wires all generated commands
 ├── generator/
 │   ├── parser.go         # Go AST parser for SDK interfaces
 │   ├── manifest.go       # TOML manifest management
@@ -29,8 +36,7 @@ generative-cli/
 │   └── config.go         # Auth config (reads ~/.config/scalingo/auth)
 ├── generated/
 │   └── commands/         # Auto-generated command files
-├── manifest.toml         # Registry of known SDK methods
-└── main.go
+└── manifest.toml         # Registry of known SDK methods
 ```
 
 ## How It Works
@@ -50,14 +56,26 @@ type AppsService interface {
 
 ### 2. Manifest Tracking (`manifest.toml`)
 
-A TOML file tracks which SDK methods have been discovered:
+A TOML file tracks which SDK methods have been discovered and whether they should be generated. Parameters are stored with names so you can tweak flag names manually without being overwritten.
 
 ```toml
 version = "1"
 sdk_version = "v8"
 
 [services.AppsService]
-methods = ["AppsList", "AppsShow", "AppsCreate", ...]
+  [[services.AppsService.methods]]
+  name = "AppsList"
+  params = []
+  returns = "[]*App"
+  generated = true
+
+  [[services.AppsService.methods]]
+  name = "AppsShow"
+  params = [
+    { name = "app", type = "string" },
+  ]
+  returns = "*App"
+  generated = true
 ```
 
 ### 3. Code Generation (`generator/codegen.go`)
@@ -84,30 +102,51 @@ Tables automatically adapt to terminal width using `lipgloss/table`.
 ### Generate Commands
 
 ```bash
-# Parse SDK and generate commands for new methods
-./generative-cli generate --sdk-path=/path/to/go-scalingo
+# Build the generator CLI (or use go run ./cmd/generator)
+go build -o generative-cli ./cmd/generator
 
-# Output:
-# Parsing SDK at /path/to/go-scalingo...
+# Update manifest with any new SDK methods (uses vendored go-scalingo/v8 by default)
+./generative-cli update-manifest
+
+# Override SDK location if you want to scan a different checkout
+./generative-cli update-manifest --sdk-path=/path/to/go-scalingo
+
+# Generate commands from manifest.toml (read-only)
+./generative-cli generate
+
+# Output (example):
+# Parsing SDK at vendor/github.com/Scalingo/go-scalingo/v8... # update-manifest
 # Found 35 services with 133 methods
-# New methods to generate: 5
-# Generated commands written to generated/commands/
+# Adding 5 new methods to manifest
+# Manifest updated!
+# Generating commands for 133 methods across 35 services # generate
+# Generation complete!
 ```
+
+### Customize manifest entries
+
+- Flip `generated = false` on any method to skip codegen for it.
+- Adjust `params` names/types to tweak flag names (e.g., rename `app-i-d` to `app-id`).
+- Change `returns` to influence renderer selection (`[]Type` → table, `*Type` → detail, empty → success).
+`generate` never rewrites the manifest, so your edits stay intact; only `update-manifest` appends missing methods.
 
 ### Use Generated Commands
 
 ```bash
+# Build the generated CLI (or use go run ./cmd/runtime)
+go build -o scalingo-gen ./cmd/runtime
+
 # List apps
-./generative-cli apps list
+./scalingo-gen apps list
 
 # Show app details
-./generative-cli apps show --app-name my-app
+./scalingo-gen apps show --app-name my-app
 
 # List regions
-./generative-cli regions list
+./scalingo-gen regions list
 
 # JSON output
-./generative-cli apps list --output json
+./scalingo-gen apps list --output json
 ```
 
 ## Authentication
