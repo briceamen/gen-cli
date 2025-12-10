@@ -4,11 +4,11 @@ package commands
 import (
 	"context"
 	"fmt"
-	"os"
 
 	scalingo "github.com/Scalingo/go-scalingo/v8"
 	"github.com/spf13/cobra"
 
+	"generative-cli/config"
 	"generative-cli/render"
 )
 
@@ -18,21 +18,36 @@ var sCMIntegrationsListCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
-		// Method: SCMIntegrationsList
-		// This is a generated stub - implement the actual SDK call
-		_ = client
+		outputFormat, _ := cmd.Flags().GetString("output")
 
-		fmt.Println(render.RenderInfo("Command 'list' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.SCMIntegrationsList(...)"))
+		result, err := client.SCMIntegrationsList(ctx)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -48,24 +63,38 @@ var sCMIntegrationsShowCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		id, _ := cmd.Flags().GetString("id")
 
-		// Method: SCMIntegrationsShow
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = id
+		result, err := client.SCMIntegrationsShow(ctx, id)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'show' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.SCMIntegrationsShow(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -83,30 +112,43 @@ var sCMIntegrationsCreateCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
-		scmType, _ := cmd.Flags().GetString("scm-type")
+		outputFormat, _ := cmd.Flags().GetString("output")
+
+		scmTypeRaw, _ := cmd.Flags().GetString("scm-type")
+		scmType := scalingo.SCMType(scmTypeRaw)
 
 		url, _ := cmd.Flags().GetString("url")
 
 		accessToken, _ := cmd.Flags().GetString("access-token")
 
-		// Method: SCMIntegrationsCreate
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = scmType
-		_ = url
-		_ = accessToken
+		result, err := client.SCMIntegrationsCreate(ctx, scmType, url, accessToken)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'create' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.SCMIntegrationsCreate(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -128,9 +170,15 @@ var sCMIntegrationsDeleteCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
@@ -139,13 +187,12 @@ var sCMIntegrationsDeleteCmd = &cobra.Command{
 
 		id, _ := cmd.Flags().GetString("id")
 
-		// Method: SCMIntegrationsDelete
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = id
+		if err := client.SCMIntegrationsDelete(ctx, id); err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(render.RenderSuccess("delete completed successfully"))
 
-		fmt.Println(render.RenderInfo("Command 'delete' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.SCMIntegrationsDelete(...)"))
 		return nil
 	},
 }
@@ -163,24 +210,38 @@ var sCMIntegrationsImportKeysCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		id, _ := cmd.Flags().GetString("id")
 
-		// Method: SCMIntegrationsImportKeys
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = id
+		result, err := client.SCMIntegrationsImportKeys(ctx, id)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'import-keys' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.SCMIntegrationsImportKeys(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }

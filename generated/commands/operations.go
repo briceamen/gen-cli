@@ -4,11 +4,11 @@ package commands
 import (
 	"context"
 	"fmt"
-	"os"
 
 	scalingo "github.com/Scalingo/go-scalingo/v8"
 	"github.com/spf13/cobra"
 
+	"generative-cli/config"
 	"generative-cli/render"
 )
 
@@ -18,24 +18,40 @@ var operationsShowCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: OperationsShow
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		opID, _ := cmd.Flags().GetString("op-i-d")
 
-		fmt.Println(render.RenderInfo("Command 'show' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.OperationsShow(...)"))
+		result, err := client.OperationsShow(ctx, app, opID)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -43,6 +59,8 @@ var operationsShowCmd = &cobra.Command{
 func initoperationsShowCmd() {
 
 	operationsShowCmd.Flags().String("app", "", "app parameter")
+
+	operationsShowCmd.Flags().String("op-i-d", "", "opID parameter")
 
 	operationsShowCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }

@@ -4,11 +4,11 @@ package commands
 import (
 	"context"
 	"fmt"
-	"os"
 
 	scalingo "github.com/Scalingo/go-scalingo/v8"
 	"github.com/spf13/cobra"
 
+	"generative-cli/config"
 	"generative-cli/render"
 )
 
@@ -18,31 +18,51 @@ var invoicesListCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
-		opts, _ := cmd.Flags().GetString("opts")
+		outputFormat, _ := cmd.Flags().GetString("output")
 
-		// Method: InvoicesList
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = opts
+		var allResults scalingo.Invoices
+		page := 1
+		for {
+			results, meta, err := client.InvoicesList(ctx, scalingo.PaginationOpts{Page: page, PerPage: 100})
+			if err != nil {
+				fmt.Println(render.RenderError(err))
+				return err
+			}
+			allResults = append(allResults, results...)
+			if meta.NextPage == 0 {
+				break
+			}
+			page = meta.NextPage
+		}
+		result := allResults
 
-		fmt.Println(render.RenderInfo("Command 'list' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.InvoicesList(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
 
 func initinvoicesListCmd() {
-
-	invoicesListCmd.Flags().String("opts", "", "opts (JSON format)")
 
 	invoicesListCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -53,24 +73,38 @@ var invoicesInvoiceShowCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		string, _ := cmd.Flags().GetString("string")
 
-		// Method: InvoiceShow
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = string
+		result, err := client.InvoiceShow(ctx, string)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'invoice-show' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.InvoiceShow(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }

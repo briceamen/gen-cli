@@ -146,6 +146,20 @@ func (m *Manifest) MethodsToGenerate() map[string][]Method {
 	return result
 }
 
+// MethodsToGenerateSet returns a set of "ServiceName.MethodName" keys for methods
+// marked as Generated. This is used to filter parsed SDK methods.
+func (m *Manifest) MethodsToGenerateSet() map[string]bool {
+	result := make(map[string]bool)
+	for serviceName, svc := range m.Services {
+		for _, method := range svc.Methods {
+			if method.Generated {
+				result[serviceName+"."+method.Name] = true
+			}
+		}
+	}
+	return result
+}
+
 // EnsureParamNames fills missing parameter names using the same inference
 // logic as the parser. This avoids writing entries with empty names when
 // persisting a legacy manifest.

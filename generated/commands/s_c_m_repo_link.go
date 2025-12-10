@@ -4,11 +4,11 @@ package commands
 import (
 	"context"
 	"fmt"
-	"os"
 
 	scalingo "github.com/Scalingo/go-scalingo/v8"
 	"github.com/spf13/cobra"
 
+	"generative-cli/config"
 	"generative-cli/render"
 )
 
@@ -18,31 +18,51 @@ var sCMRepoLinkListCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
-		opts, _ := cmd.Flags().GetString("opts")
+		outputFormat, _ := cmd.Flags().GetString("output")
 
-		// Method: SCMRepoLinkList
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = opts
+		var allResults []*scalingo.SCMRepoLink
+		page := 1
+		for {
+			results, meta, err := client.SCMRepoLinkList(ctx, scalingo.PaginationOpts{Page: page, PerPage: 100})
+			if err != nil {
+				fmt.Println(render.RenderError(err))
+				return err
+			}
+			allResults = append(allResults, results...)
+			if meta.NextPage == 0 {
+				break
+			}
+			page = meta.NextPage
+		}
+		result := allResults
 
-		fmt.Println(render.RenderInfo("Command 'list' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.SCMRepoLinkList(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
 
 func initsCMRepoLinkListCmd() {
-
-	sCMRepoLinkListCmd.Flags().String("opts", "", "opts (JSON format)")
 
 	sCMRepoLinkListCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -53,24 +73,38 @@ var sCMRepoLinkShowCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: SCMRepoLinkShow
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		result, err := client.SCMRepoLinkShow(ctx, app)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'show' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.SCMRepoLinkShow(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -88,27 +122,71 @@ var sCMRepoLinkCreateCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		params, _ := cmd.Flags().GetString("params")
+		sourceFlag, _ := cmd.Flags().GetString("source")
 
-		// Method: SCMRepoLinkCreate
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = params
+		branchFlag, _ := cmd.Flags().GetString("branch")
 
-		fmt.Println(render.RenderInfo("Command 'create' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.SCMRepoLinkCreate(...)"))
+		authIntegrationUUIDFlag, _ := cmd.Flags().GetString("auth-integration-u-u---a-c-r0--")
+
+		autoDeployEnabledFlag, _ := cmd.Flags().GetBool("auto-deploy-enabled")
+
+		deployReviewAppsEnabledFlag, _ := cmd.Flags().GetBool("deploy-review-apps-enabled")
+
+		destroyOnCloseEnabledFlag, _ := cmd.Flags().GetBool("destroy-on-close-enabled")
+
+		hoursBeforeDeleteOnCloseFlag, _ := cmd.Flags().GetUint("hours-before-delete-on-close")
+
+		destroyStaleEnabledFlag, _ := cmd.Flags().GetBool("destroy-stale-enabled")
+
+		hoursBeforeDeleteStaleFlag, _ := cmd.Flags().GetUint("hours-before-delete-stale")
+
+		automaticCreationFromForksAllowedFlag, _ := cmd.Flags().GetBool("automatic-creation-from-forks-allowed")
+
+		params := scalingo.SCMRepoLinkCreateParams{
+			Source:                            &sourceFlag,
+			Branch:                            &branchFlag,
+			AuthIntegrationUUID:               &authIntegrationUUIDFlag,
+			AutoDeployEnabled:                 &autoDeployEnabledFlag,
+			DeployReviewAppsEnabled:           &deployReviewAppsEnabledFlag,
+			DestroyOnCloseEnabled:             &destroyOnCloseEnabledFlag,
+			HoursBeforeDeleteOnClose:          &hoursBeforeDeleteOnCloseFlag,
+			DestroyStaleEnabled:               &destroyStaleEnabledFlag,
+			HoursBeforeDeleteStale:            &hoursBeforeDeleteStaleFlag,
+			AutomaticCreationFromForksAllowed: &automaticCreationFromForksAllowedFlag,
+		}
+
+		result, err := client.SCMRepoLinkCreate(ctx, app, params)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -117,7 +195,25 @@ func initsCMRepoLinkCreateCmd() {
 
 	sCMRepoLinkCreateCmd.Flags().String("app", "", "app parameter")
 
-	sCMRepoLinkCreateCmd.Flags().String("params", "", "params (JSON format)")
+	sCMRepoLinkCreateCmd.Flags().String("source", "", "Source field")
+
+	sCMRepoLinkCreateCmd.Flags().String("branch", "", "Branch field")
+
+	sCMRepoLinkCreateCmd.Flags().String("auth-integration-u-u---a-c-r0--", "", "AuthIntegrationUUID field")
+
+	sCMRepoLinkCreateCmd.Flags().Bool("auto-deploy-enabled", false, "AutoDeployEnabled field")
+
+	sCMRepoLinkCreateCmd.Flags().Bool("deploy-review-apps-enabled", false, "DeployReviewAppsEnabled field")
+
+	sCMRepoLinkCreateCmd.Flags().Bool("destroy-on-close-enabled", false, "DestroyOnCloseEnabled field")
+
+	sCMRepoLinkCreateCmd.Flags().Uint("hours-before-delete-on-close", 0, "HoursBeforeDeleteOnClose field")
+
+	sCMRepoLinkCreateCmd.Flags().Bool("destroy-stale-enabled", false, "DestroyStaleEnabled field")
+
+	sCMRepoLinkCreateCmd.Flags().Uint("hours-before-delete-stale", 0, "HoursBeforeDeleteStale field")
+
+	sCMRepoLinkCreateCmd.Flags().Bool("automatic-creation-from-forks-allowed", false, "AutomaticCreationFromForksAllowed field")
 
 	sCMRepoLinkCreateCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -128,27 +224,65 @@ var sCMRepoLinkUpdateCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		params, _ := cmd.Flags().GetString("params")
+		branchFlag, _ := cmd.Flags().GetString("branch")
 
-		// Method: SCMRepoLinkUpdate
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = params
+		autoDeployEnabledFlag, _ := cmd.Flags().GetBool("auto-deploy-enabled")
 
-		fmt.Println(render.RenderInfo("Command 'update' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.SCMRepoLinkUpdate(...)"))
+		deployReviewAppsEnabledFlag, _ := cmd.Flags().GetBool("deploy-review-apps-enabled")
+
+		destroyOnCloseEnabledFlag, _ := cmd.Flags().GetBool("destroy-on-close-enabled")
+
+		hoursBeforeDeleteOnCloseFlag, _ := cmd.Flags().GetUint("hours-before-delete-on-close")
+
+		destroyStaleEnabledFlag, _ := cmd.Flags().GetBool("destroy-stale-enabled")
+
+		hoursBeforeDeleteStaleFlag, _ := cmd.Flags().GetUint("hours-before-delete-stale")
+
+		automaticCreationFromForksAllowedFlag, _ := cmd.Flags().GetBool("automatic-creation-from-forks-allowed")
+
+		params := scalingo.SCMRepoLinkUpdateParams{
+			Branch:                            &branchFlag,
+			AutoDeployEnabled:                 &autoDeployEnabledFlag,
+			DeployReviewAppsEnabled:           &deployReviewAppsEnabledFlag,
+			DestroyOnCloseEnabled:             &destroyOnCloseEnabledFlag,
+			HoursBeforeDeleteOnClose:          &hoursBeforeDeleteOnCloseFlag,
+			DestroyStaleEnabled:               &destroyStaleEnabledFlag,
+			HoursBeforeDeleteStale:            &hoursBeforeDeleteStaleFlag,
+			AutomaticCreationFromForksAllowed: &automaticCreationFromForksAllowedFlag,
+		}
+
+		result, err := client.SCMRepoLinkUpdate(ctx, app, params)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -157,7 +291,21 @@ func initsCMRepoLinkUpdateCmd() {
 
 	sCMRepoLinkUpdateCmd.Flags().String("app", "", "app parameter")
 
-	sCMRepoLinkUpdateCmd.Flags().String("params", "", "params (JSON format)")
+	sCMRepoLinkUpdateCmd.Flags().String("branch", "", "Branch field")
+
+	sCMRepoLinkUpdateCmd.Flags().Bool("auto-deploy-enabled", false, "AutoDeployEnabled field")
+
+	sCMRepoLinkUpdateCmd.Flags().Bool("deploy-review-apps-enabled", false, "DeployReviewAppsEnabled field")
+
+	sCMRepoLinkUpdateCmd.Flags().Bool("destroy-on-close-enabled", false, "DestroyOnCloseEnabled field")
+
+	sCMRepoLinkUpdateCmd.Flags().Uint("hours-before-delete-on-close", 0, "HoursBeforeDeleteOnClose field")
+
+	sCMRepoLinkUpdateCmd.Flags().Bool("destroy-stale-enabled", false, "DestroyStaleEnabled field")
+
+	sCMRepoLinkUpdateCmd.Flags().Uint("hours-before-delete-stale", 0, "HoursBeforeDeleteStale field")
+
+	sCMRepoLinkUpdateCmd.Flags().Bool("automatic-creation-from-forks-allowed", false, "AutomaticCreationFromForksAllowed field")
 
 	sCMRepoLinkUpdateCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -168,9 +316,15 @@ var sCMRepoLinkDeleteCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
@@ -179,13 +333,12 @@ var sCMRepoLinkDeleteCmd = &cobra.Command{
 
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: SCMRepoLinkDelete
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		if err := client.SCMRepoLinkDelete(ctx, app); err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(render.RenderSuccess("delete completed successfully"))
 
-		fmt.Println(render.RenderInfo("Command 'delete' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.SCMRepoLinkDelete(...)"))
 		return nil
 	},
 }
@@ -203,27 +356,40 @@ var sCMRepoLinkPullRequestCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
 		number, _ := cmd.Flags().GetInt("number")
 
-		// Method: SCMRepoLinkPullRequest
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = number
+		result, err := client.SCMRepoLinkPullRequest(ctx, app, number)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'pull-request' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.SCMRepoLinkPullRequest(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -243,24 +409,40 @@ var sCMRepoLinkManualDeployCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: SCMRepoLinkManualDeploy
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		branch, _ := cmd.Flags().GetString("branch")
 
-		fmt.Println(render.RenderInfo("Command 'manual-deploy' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.SCMRepoLinkManualDeploy(...)"))
+		result, err := client.SCMRepoLinkManualDeploy(ctx, app, branch)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -268,6 +450,8 @@ var sCMRepoLinkManualDeployCmd = &cobra.Command{
 func initsCMRepoLinkManualDeployCmd() {
 
 	sCMRepoLinkManualDeployCmd.Flags().String("app", "", "app parameter")
+
+	sCMRepoLinkManualDeployCmd.Flags().String("branch", "", "branch parameter")
 
 	sCMRepoLinkManualDeployCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -278,9 +462,15 @@ var sCMRepoLinkManualReviewAppCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
@@ -289,13 +479,14 @@ var sCMRepoLinkManualReviewAppCmd = &cobra.Command{
 
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: SCMRepoLinkManualReviewApp
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		pullRequestID, _ := cmd.Flags().GetString("pull-request-i-d")
 
-		fmt.Println(render.RenderInfo("Command 'manual-review-app' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.SCMRepoLinkManualReviewApp(...)"))
+		if err := client.SCMRepoLinkManualReviewApp(ctx, app, pullRequestID); err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(render.RenderSuccess("manual-review-app completed successfully"))
+
 		return nil
 	},
 }
@@ -303,6 +494,8 @@ var sCMRepoLinkManualReviewAppCmd = &cobra.Command{
 func initsCMRepoLinkManualReviewAppCmd() {
 
 	sCMRepoLinkManualReviewAppCmd.Flags().String("app", "", "app parameter")
+
+	sCMRepoLinkManualReviewAppCmd.Flags().String("pull-request-i-d", "", "pullRequestID parameter")
 
 	sCMRepoLinkManualReviewAppCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -313,24 +506,38 @@ var sCMRepoLinkDeploymentsCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: SCMRepoLinkDeployments
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		result, err := client.SCMRepoLinkDeployments(ctx, app)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'deployments' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.SCMRepoLinkDeployments(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -348,24 +555,38 @@ var sCMRepoLinkReviewAppsCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: SCMRepoLinkReviewApps
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		result, err := client.SCMRepoLinkReviewApps(ctx, app)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'review-apps' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.SCMRepoLinkReviewApps(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }

@@ -4,11 +4,11 @@ package commands
 import (
 	"context"
 	"fmt"
-	"os"
 
 	scalingo "github.com/Scalingo/go-scalingo/v8"
 	"github.com/spf13/cobra"
 
+	"generative-cli/config"
 	"generative-cli/render"
 )
 
@@ -18,21 +18,36 @@ var projectsListCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
-		// Method: ProjectsList
-		// This is a generated stub - implement the actual SDK call
-		_ = client
+		outputFormat, _ := cmd.Flags().GetString("output")
 
-		fmt.Println(render.RenderInfo("Command 'list' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.ProjectsList(...)"))
+		result, err := client.ProjectsList(ctx)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -48,31 +63,54 @@ var projectsProjectAddCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
-		params, _ := cmd.Flags().GetString("params")
+		outputFormat, _ := cmd.Flags().GetString("output")
 
-		// Method: ProjectAdd
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = params
+		nameFlag, _ := cmd.Flags().GetString("name")
 
-		fmt.Println(render.RenderInfo("Command 'project-add' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.ProjectAdd(...)"))
+		defaultFlag, _ := cmd.Flags().GetBool("default")
+
+		params := scalingo.ProjectAddParams{
+			Name:    nameFlag,
+			Default: defaultFlag,
+		}
+
+		result, err := client.ProjectAdd(ctx, params)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
 
 func initprojectsProjectAddCmd() {
 
-	projectsProjectAddCmd.Flags().String("params", "", "params (JSON format)")
+	projectsProjectAddCmd.Flags().String("name", "", "Name field")
+
+	projectsProjectAddCmd.Flags().Bool("default", false, "Default field")
 
 	projectsProjectAddCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -83,27 +121,47 @@ var projectsProjectUpdateCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		projectID, _ := cmd.Flags().GetString("project-i-d")
 
-		params, _ := cmd.Flags().GetString("params")
+		nameFlag, _ := cmd.Flags().GetString("name")
 
-		// Method: ProjectUpdate
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = projectID
-		_ = params
+		defaultFlag, _ := cmd.Flags().GetBool("default")
 
-		fmt.Println(render.RenderInfo("Command 'project-update' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.ProjectUpdate(...)"))
+		params := scalingo.ProjectUpdateParams{
+			Name:    &nameFlag,
+			Default: &defaultFlag,
+		}
+
+		result, err := client.ProjectUpdate(ctx, projectID, params)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -112,7 +170,9 @@ func initprojectsProjectUpdateCmd() {
 
 	projectsProjectUpdateCmd.Flags().String("project-i-d", "", "projectID parameter")
 
-	projectsProjectUpdateCmd.Flags().String("params", "", "params (JSON format)")
+	projectsProjectUpdateCmd.Flags().String("name", "", "Name field")
+
+	projectsProjectUpdateCmd.Flags().Bool("default", false, "Default field")
 
 	projectsProjectUpdateCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -123,24 +183,38 @@ var projectsProjectGetCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		projectID, _ := cmd.Flags().GetString("project-i-d")
 
-		// Method: ProjectGet
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = projectID
+		result, err := client.ProjectGet(ctx, projectID)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'project-get' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.ProjectGet(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -158,9 +232,15 @@ var projectsProjectDeleteCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
@@ -169,13 +249,12 @@ var projectsProjectDeleteCmd = &cobra.Command{
 
 		projectID, _ := cmd.Flags().GetString("project-i-d")
 
-		// Method: ProjectDelete
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = projectID
+		if err := client.ProjectDelete(ctx, projectID); err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(render.RenderSuccess("project-delete completed successfully"))
 
-		fmt.Println(render.RenderInfo("Command 'project-delete' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.ProjectDelete(...)"))
 		return nil
 	},
 }
@@ -193,24 +272,38 @@ var projectsProjectPrivateNetworkGetCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		projectID, _ := cmd.Flags().GetString("project-i-d")
 
-		// Method: ProjectPrivateNetworkGet
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = projectID
+		result, err := client.ProjectPrivateNetworkGet(ctx, projectID)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'project-private-network-get' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.ProjectPrivateNetworkGet(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }

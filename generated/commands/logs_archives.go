@@ -4,11 +4,11 @@ package commands
 import (
 	"context"
 	"fmt"
-	"os"
 
 	scalingo "github.com/Scalingo/go-scalingo/v8"
 	"github.com/spf13/cobra"
 
+	"generative-cli/config"
 	"generative-cli/render"
 )
 
@@ -18,27 +18,40 @@ var logsArchivesByCursorCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
 		cursor, _ := cmd.Flags().GetString("cursor")
 
-		// Method: LogsArchivesByCursor
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = cursor
+		result, err := client.LogsArchivesByCursor(ctx, app, cursor)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'by-cursor' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.LogsArchivesByCursor(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -58,27 +71,40 @@ var logsArchivesRunCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
 		page, _ := cmd.Flags().GetInt("page")
 
-		// Method: LogsArchives
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = page
+		result, err := client.LogsArchives(ctx, app, page)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'run' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.LogsArchives(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }

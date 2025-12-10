@@ -4,11 +4,11 @@ package commands
 import (
 	"context"
 	"fmt"
-	"os"
 
 	scalingo "github.com/Scalingo/go-scalingo/v8"
 	"github.com/spf13/cobra"
 
+	"generative-cli/config"
 	"generative-cli/render"
 )
 
@@ -18,24 +18,38 @@ var addonsListCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: AddonsList
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		result, err := client.AddonsList(ctx, app)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'list' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AddonsList(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -53,27 +67,47 @@ var addonsAddonProvisionCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		params, _ := cmd.Flags().GetString("params")
+		addonProviderIDFlag, _ := cmd.Flags().GetString("addon-provider---a-c-r0--")
 
-		// Method: AddonProvision
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = params
+		planIDFlag, _ := cmd.Flags().GetString("plan---a-c-r0--")
 
-		fmt.Println(render.RenderInfo("Command 'addon-provision' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AddonProvision(...)"))
+		params := scalingo.AddonProvisionParams{
+			AddonProviderID: addonProviderIDFlag,
+			PlanID:          planIDFlag,
+		}
+
+		result, err := client.AddonProvision(ctx, app, params)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -82,7 +116,9 @@ func initaddonsAddonProvisionCmd() {
 
 	addonsAddonProvisionCmd.Flags().String("app", "", "app parameter")
 
-	addonsAddonProvisionCmd.Flags().String("params", "", "params (JSON format)")
+	addonsAddonProvisionCmd.Flags().String("addon-provider---a-c-r0--", "", "AddonProviderID field")
+
+	addonsAddonProvisionCmd.Flags().String("plan---a-c-r0--", "", "PlanID field")
 
 	addonsAddonProvisionCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -93,9 +129,15 @@ var addonsAddonDestroyCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
@@ -104,13 +146,14 @@ var addonsAddonDestroyCmd = &cobra.Command{
 
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: AddonDestroy
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		addonID, _ := cmd.Flags().GetString("addon-i-d")
 
-		fmt.Println(render.RenderInfo("Command 'addon-destroy' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AddonDestroy(...)"))
+		if err := client.AddonDestroy(ctx, app, addonID); err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(render.RenderSuccess("addon-destroy completed successfully"))
+
 		return nil
 	},
 }
@@ -118,6 +161,8 @@ var addonsAddonDestroyCmd = &cobra.Command{
 func initaddonsAddonDestroyCmd() {
 
 	addonsAddonDestroyCmd.Flags().String("app", "", "app parameter")
+
+	addonsAddonDestroyCmd.Flags().String("addon-i-d", "", "addonID parameter")
 
 	addonsAddonDestroyCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -128,27 +173,46 @@ var addonsAddonUpgradeCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		params, _ := cmd.Flags().GetString("params")
+		addonID, _ := cmd.Flags().GetString("addon-i-d")
 
-		// Method: AddonUpgrade
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = params
+		planIDFlag, _ := cmd.Flags().GetString("plan---a-c-r0--")
 
-		fmt.Println(render.RenderInfo("Command 'addon-upgrade' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AddonUpgrade(...)"))
+		params := scalingo.AddonUpgradeParams{
+			PlanID: planIDFlag,
+		}
+
+		result, err := client.AddonUpgrade(ctx, app, addonID, params)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -157,7 +221,9 @@ func initaddonsAddonUpgradeCmd() {
 
 	addonsAddonUpgradeCmd.Flags().String("app", "", "app parameter")
 
-	addonsAddonUpgradeCmd.Flags().String("params", "", "params (JSON format)")
+	addonsAddonUpgradeCmd.Flags().String("addon-i-d", "", "addonID parameter")
+
+	addonsAddonUpgradeCmd.Flags().String("plan---a-c-r0--", "", "PlanID field")
 
 	addonsAddonUpgradeCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -168,24 +234,40 @@ var addonsAddonTokenCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: AddonToken
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		addonID, _ := cmd.Flags().GetString("addon-i-d")
 
-		fmt.Println(render.RenderInfo("Command 'addon-token' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AddonToken(...)"))
+		result, err := client.AddonToken(ctx, app, addonID)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -193,6 +275,8 @@ var addonsAddonTokenCmd = &cobra.Command{
 func initaddonsAddonTokenCmd() {
 
 	addonsAddonTokenCmd.Flags().String("app", "", "app parameter")
+
+	addonsAddonTokenCmd.Flags().String("addon-i-d", "", "addonID parameter")
 
 	addonsAddonTokenCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -203,24 +287,40 @@ var addonsAddonLogsURLCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: AddonLogsURL
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		addonID, _ := cmd.Flags().GetString("addon-i-d")
 
-		fmt.Println(render.RenderInfo("Command 'addon-logs-u-r-l' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AddonLogsURL(...)"))
+		result, err := client.AddonLogsURL(ctx, app, addonID)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -228,6 +328,8 @@ var addonsAddonLogsURLCmd = &cobra.Command{
 func initaddonsAddonLogsURLCmd() {
 
 	addonsAddonLogsURLCmd.Flags().String("app", "", "app parameter")
+
+	addonsAddonLogsURLCmd.Flags().String("addon-i-d", "", "addonID parameter")
 
 	addonsAddonLogsURLCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -238,27 +340,42 @@ var addonsAddonLogsArchivesCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
+
+		addonID, _ := cmd.Flags().GetString("addon-i-d")
 
 		page, _ := cmd.Flags().GetInt("page")
 
-		// Method: AddonLogsArchives
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = page
+		result, err := client.AddonLogsArchives(ctx, app, addonID, page)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'addon-logs-archives' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AddonLogsArchives(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -266,6 +383,8 @@ var addonsAddonLogsArchivesCmd = &cobra.Command{
 func initaddonsAddonLogsArchivesCmd() {
 
 	addonsAddonLogsArchivesCmd.Flags().String("app", "", "app parameter")
+
+	addonsAddonLogsArchivesCmd.Flags().String("addon-i-d", "", "addonID parameter")
 
 	addonsAddonLogsArchivesCmd.Flags().Int("page", 0, "page parameter")
 

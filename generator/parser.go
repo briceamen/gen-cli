@@ -53,6 +53,10 @@ func ParseSDK(sdkPath string) ([]Service, error) {
 						if typeSpec, ok := spec.(*ast.TypeSpec); ok {
 							// Look for *Service interfaces
 							if strings.HasSuffix(typeSpec.Name.Name, "Service") {
+								// Skip preview services - they use different clients
+								if strings.Contains(typeSpec.Name.Name, "Preview") {
+									continue
+								}
 								if ifaceType, ok := typeSpec.Type.(*ast.InterfaceType); ok {
 									service := parseInterface(typeSpec.Name.Name, ifaceType)
 									services = append(services, service)
@@ -66,6 +70,130 @@ func ParseSDK(sdkPath string) ([]Service, error) {
 	}
 
 	return services, nil
+}
+
+// ParseSDKWithStructs parses the SDK and returns both services and struct definitions
+// This is more efficient than calling ParseSDK and GetStructs separately
+func ParseSDKWithStructs(sdkPath string) ([]Service, map[string]ParsedStruct, error) {
+	fset := token.NewFileSet()
+
+	pkgs, err := parser.ParseDir(fset, sdkPath, func(fi os.FileInfo) bool {
+		return !strings.HasSuffix(fi.Name(), "_test.go") &&
+			!strings.HasPrefix(fi.Name(), ".")
+	}, parser.ParseComments)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to parse directory: %w", err)
+	}
+
+	var services []Service
+	structs := make(map[string]ParsedStruct)
+
+	// First pass: collect all structs
+	for _, pkg := range pkgs {
+		for _, file := range pkg.Files {
+			for _, decl := range file.Decls {
+				if genDecl, ok := decl.(*ast.GenDecl); ok && genDecl.Tok == token.TYPE {
+					for _, spec := range genDecl.Specs {
+						if typeSpec, ok := spec.(*ast.TypeSpec); ok {
+							if structType, ok := typeSpec.Type.(*ast.StructType); ok {
+								ps := parseStruct(typeSpec.Name.Name, structType)
+								structs[ps.Name] = ps
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Second pass: extract service interfaces
+	for _, pkg := range pkgs {
+		for _, file := range pkg.Files {
+			for _, decl := range file.Decls {
+				if genDecl, ok := decl.(*ast.GenDecl); ok && genDecl.Tok == token.TYPE {
+					for _, spec := range genDecl.Specs {
+						if typeSpec, ok := spec.(*ast.TypeSpec); ok {
+							if strings.HasSuffix(typeSpec.Name.Name, "Service") {
+								// Skip preview services - they use different clients
+								if strings.Contains(typeSpec.Name.Name, "Preview") {
+									continue
+								}
+								if ifaceType, ok := typeSpec.Type.(*ast.InterfaceType); ok {
+									service := parseInterface(typeSpec.Name.Name, ifaceType)
+									services = append(services, service)
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return services, structs, nil
+}
+
+// IsExpandableParam checks if a parameter type should be expanded into individual CLI flags
+// This includes types ending in Opts, Options, or Params
+func IsExpandableParam(paramType string, structs map[string]ParsedStruct) bool {
+	baseType := strings.TrimPrefix(paramType, "*")
+	if _, ok := structs[baseType]; ok {
+		return strings.HasSuffix(baseType, "Opts") ||
+			strings.HasSuffix(baseType, "Options") ||
+			strings.HasSuffix(baseType, "Params")
+	}
+	return false
+}
+
+// IsPaginationParam checks if a parameter is a pagination options type
+func IsPaginationParam(paramType string) bool {
+	baseType := strings.TrimPrefix(paramType, "*")
+	return baseType == "PaginationOpts"
+}
+
+// HasPaginationMeta checks if a method returns PaginationMeta (indicating it supports pagination)
+func HasPaginationMeta(method Method) bool {
+	for _, ret := range method.Returns {
+		if ret.Type == "PaginationMeta" {
+			return true
+		}
+	}
+	return false
+}
+
+// SupportsPagination checks if a method supports pagination by examining its parameters.
+// A method supports pagination if it accepts PaginationOpts.
+func SupportsPagination(method Method) bool {
+	for _, param := range method.Params {
+		if IsPaginationParam(param.Type) {
+			return true
+		}
+	}
+	return false
+}
+
+// GetPrimaryReturnType returns the first non-error return type
+func GetPrimaryReturnType(method Method) string {
+	for _, ret := range method.Returns {
+		if !ret.IsError && ret.Type != "PaginationMeta" {
+			return ret.Type
+		}
+	}
+	return ""
+}
+
+// InferRendererType determines the appropriate renderer based on return type
+func InferRendererType(returnType string) string {
+	switch {
+	case returnType == "" || returnType == "error":
+		return "success"
+	case strings.HasPrefix(returnType, "[]") || strings.HasPrefix(returnType, "[]*"):
+		return "table"
+	case returnType == "*http.Response":
+		return "http"
+	default:
+		return "detail"
+	}
 }
 
 func parseInterface(name string, iface *ast.InterfaceType) Service {
@@ -102,19 +230,22 @@ func parseInterface(name string, iface *ast.InterfaceType) Service {
 					continue
 				}
 
-				// Generate a name if not present
-			paramName := ""
-			if len(param.Names) > 0 {
-				paramName = param.Names[0].Name
-			} else {
-				// Generate name from type (e.g., "PaginationOpts" -> "opts")
-				paramName = inferParamName(paramType, len(m.Params))
-			}
-
-			m.Params = append(m.Params, Param{
-				Name: paramName,
-				Type: paramType,
-			})
+				// Handle multi-name declarations like "app, addonID string"
+				if len(param.Names) > 0 {
+					for _, name := range param.Names {
+						m.Params = append(m.Params, Param{
+							Name: name.Name,
+							Type: paramType,
+						})
+					}
+				} else {
+					// Generate name from type (e.g., "PaginationOpts" -> "opts")
+					paramName := inferParamName(paramType, len(m.Params))
+					m.Params = append(m.Params, Param{
+						Name: paramName,
+						Type: paramType,
+					})
+				}
 			}
 		}
 

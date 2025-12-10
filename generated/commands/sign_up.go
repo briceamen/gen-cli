@@ -4,11 +4,11 @@ package commands
 import (
 	"context"
 	"fmt"
-	"os"
 
 	scalingo "github.com/Scalingo/go-scalingo/v8"
 	"github.com/spf13/cobra"
 
+	"generative-cli/config"
 	"generative-cli/render"
 )
 
@@ -18,9 +18,15 @@ var signUpRunCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
@@ -29,13 +35,14 @@ var signUpRunCmd = &cobra.Command{
 
 		email, _ := cmd.Flags().GetString("email")
 
-		// Method: SignUp
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = email
+		password, _ := cmd.Flags().GetString("password")
 
-		fmt.Println(render.RenderInfo("Command 'run' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.SignUp(...)"))
+		if err := client.SignUp(ctx, email, password); err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(render.RenderSuccess("run completed successfully"))
+
 		return nil
 	},
 }
@@ -43,6 +50,8 @@ var signUpRunCmd = &cobra.Command{
 func initsignUpRunCmd() {
 
 	signUpRunCmd.Flags().String("email", "", "email parameter")
+
+	signUpRunCmd.Flags().String("password", "", "password parameter")
 
 	signUpRunCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }

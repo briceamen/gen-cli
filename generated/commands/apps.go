@@ -4,11 +4,11 @@ package commands
 import (
 	"context"
 	"fmt"
-	"os"
 
 	scalingo "github.com/Scalingo/go-scalingo/v8"
 	"github.com/spf13/cobra"
 
+	"generative-cli/config"
 	"generative-cli/render"
 )
 
@@ -18,21 +18,36 @@ var appsListCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
-		// Method: AppsList
-		// This is a generated stub - implement the actual SDK call
-		_ = client
+		outputFormat, _ := cmd.Flags().GetString("output")
 
-		fmt.Println(render.RenderInfo("Command 'list' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AppsList(...)"))
+		result, err := client.AppsList(ctx)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -48,24 +63,38 @@ var appsShowCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		appName, _ := cmd.Flags().GetString("app-name")
 
-		// Method: AppsShow
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = appName
+		result, err := client.AppsShow(ctx, appName)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'show' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AppsShow(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -83,9 +112,15 @@ var appsDestroyCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
@@ -96,14 +131,12 @@ var appsDestroyCmd = &cobra.Command{
 
 		currentName, _ := cmd.Flags().GetString("current-name")
 
-		// Method: AppsDestroy
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = name
-		_ = currentName
+		if err := client.AppsDestroy(ctx, name, currentName); err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(render.RenderSuccess("destroy completed successfully"))
 
-		fmt.Println(render.RenderInfo("Command 'destroy' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AppsDestroy(...)"))
 		return nil
 	},
 }
@@ -123,27 +156,40 @@ var appsRenameCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		name, _ := cmd.Flags().GetString("name")
 
 		newName, _ := cmd.Flags().GetString("new-name")
 
-		// Method: AppsRename
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = name
-		_ = newName
+		result, err := client.AppsRename(ctx, name, newName)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'rename' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AppsRename(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -163,27 +209,40 @@ var appsTransferCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		name, _ := cmd.Flags().GetString("name")
 
 		email, _ := cmd.Flags().GetString("email")
 
-		// Method: AppsTransfer
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = name
-		_ = email
+		result, err := client.AppsTransfer(ctx, name, email)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'transfer' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AppsTransfer(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -203,27 +262,40 @@ var appsSetStackCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		name, _ := cmd.Flags().GetString("name")
 
 		stackID, _ := cmd.Flags().GetString("stack-i-d")
 
-		// Method: AppsSetStack
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = name
-		_ = stackID
+		result, err := client.AppsSetStack(ctx, name, stackID)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'set-stack' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AppsSetStack(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -243,27 +315,44 @@ var appsRestartCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		scope, _ := cmd.Flags().GetString("scope")
+		scopeFlag, _ := cmd.Flags().GetStringSlice("scope")
 
-		// Method: AppsRestart
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = scope
+		scope := &scalingo.AppsRestartParams{
+			Scope: scopeFlag,
+		}
 
-		fmt.Println(render.RenderInfo("Command 'restart' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AppsRestart(...)"))
+		result, err := client.AppsRestart(ctx, app, scope)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -272,7 +361,7 @@ func initappsRestartCmd() {
 
 	appsRestartCmd.Flags().String("app", "", "app parameter")
 
-	appsRestartCmd.Flags().String("scope", "", "scope (JSON format)")
+	appsRestartCmd.Flags().StringSlice("scope", nil, "Scope field")
 
 	appsRestartCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -283,31 +372,64 @@ var appsCreateCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
-		opts, _ := cmd.Flags().GetString("opts")
+		outputFormat, _ := cmd.Flags().GetString("output")
 
-		// Method: AppsCreate
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = opts
+		nameFlag, _ := cmd.Flags().GetString("name")
 
-		fmt.Println(render.RenderInfo("Command 'create' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AppsCreate(...)"))
+		parentAppFlag, _ := cmd.Flags().GetString("parent-app")
+
+		stackIDFlag, _ := cmd.Flags().GetString("stack---a-c-r0--")
+
+		projectIDFlag, _ := cmd.Flags().GetString("project---a-c-r0--")
+
+		opts := scalingo.AppsCreateOpts{
+			Name:      nameFlag,
+			ParentApp: parentAppFlag,
+			StackID:   stackIDFlag,
+			ProjectID: projectIDFlag,
+		}
+
+		result, err := client.AppsCreate(ctx, opts)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
 
 func initappsCreateCmd() {
 
-	appsCreateCmd.Flags().String("opts", "", "opts (JSON format)")
+	appsCreateCmd.Flags().String("name", "", "Name field")
+
+	appsCreateCmd.Flags().String("parent-app", "", "ParentApp field")
+
+	appsCreateCmd.Flags().String("stack---a-c-r0--", "", "StackID field")
+
+	appsCreateCmd.Flags().String("project---a-c-r0--", "", "ProjectID field")
 
 	appsCreateCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -318,24 +440,38 @@ var appsStatsCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: AppsStats
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		result, err := client.AppsStats(ctx, app)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'stats' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AppsStats(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -353,24 +489,38 @@ var appsContainerTypesCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: AppsContainerTypes
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		result, err := client.AppsContainerTypes(ctx, app)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'container-types' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AppsContainerTypes(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -388,24 +538,38 @@ var appsContainersPsCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: AppsContainersPs
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		result, err := client.AppsContainersPs(ctx, app)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'containers-ps' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AppsContainersPs(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -423,27 +587,40 @@ var appsScaleCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		params, _ := cmd.Flags().GetString("params")
+		params := &scalingo.AppsScaleParams{}
 
-		// Method: AppsScale
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = params
+		result, err := client.AppsScale(ctx, app, params)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'scale' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AppsScale(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -451,8 +628,6 @@ var appsScaleCmd = &cobra.Command{
 func initappsScaleCmd() {
 
 	appsScaleCmd.Flags().String("app", "", "app parameter")
-
-	appsScaleCmd.Flags().String("params", "", "params (JSON format)")
 
 	appsScaleCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -463,27 +638,40 @@ var appsForceHTTPSCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		name, _ := cmd.Flags().GetString("name")
 
 		enable, _ := cmd.Flags().GetBool("enable")
 
-		// Method: AppsForceHTTPS
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = name
-		_ = enable
+		result, err := client.AppsForceHTTPS(ctx, name, enable)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'force-h-t-t-p-s' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AppsForceHTTPS(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -503,27 +691,40 @@ var appsStickySessionCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		name, _ := cmd.Flags().GetString("name")
 
 		enable, _ := cmd.Flags().GetBool("enable")
 
-		// Method: AppsStickySession
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = name
-		_ = enable
+		result, err := client.AppsStickySession(ctx, name, enable)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'sticky-session' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AppsStickySession(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -543,27 +744,40 @@ var appsRouterLogsCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		name, _ := cmd.Flags().GetString("name")
 
 		enable, _ := cmd.Flags().GetBool("enable")
 
-		// Method: AppsRouterLogs
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = name
-		_ = enable
+		result, err := client.AppsRouterLogs(ctx, name, enable)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'router-logs' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AppsRouterLogs(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }

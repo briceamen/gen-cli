@@ -4,11 +4,11 @@ package commands
 import (
 	"context"
 	"fmt"
-	"os"
 
 	scalingo "github.com/Scalingo/go-scalingo/v8"
 	"github.com/spf13/cobra"
 
+	"generative-cli/config"
 	"generative-cli/render"
 )
 
@@ -18,24 +18,38 @@ var alertsListCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: AlertsList
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		result, err := client.AlertsList(ctx, app)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'list' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AlertsList(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -53,27 +67,59 @@ var alertsAlertAddCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		params, _ := cmd.Flags().GetString("params")
+		containerTypeFlag, _ := cmd.Flags().GetString("container-type")
 
-		// Method: AlertAdd
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = params
+		metricFlag, _ := cmd.Flags().GetString("metric")
 
-		fmt.Println(render.RenderInfo("Command 'alert-add' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AlertAdd(...)"))
+		limitFlag, _ := cmd.Flags().GetFloat64("limit")
+
+		disabledFlag, _ := cmd.Flags().GetBool("disabled")
+
+		sendWhenBelowFlag, _ := cmd.Flags().GetBool("send-when-below")
+
+		notifiersFlag, _ := cmd.Flags().GetStringSlice("notifiers")
+
+		params := scalingo.AlertAddParams{
+			ContainerType: containerTypeFlag,
+			Metric:        metricFlag,
+			Limit:         limitFlag,
+			Disabled:      disabledFlag,
+			SendWhenBelow: sendWhenBelowFlag,
+			Notifiers:     notifiersFlag,
+		}
+
+		result, err := client.AlertAdd(ctx, app, params)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -82,7 +128,17 @@ func initalertsAlertAddCmd() {
 
 	alertsAlertAddCmd.Flags().String("app", "", "app parameter")
 
-	alertsAlertAddCmd.Flags().String("params", "", "params (JSON format)")
+	alertsAlertAddCmd.Flags().String("container-type", "", "ContainerType field")
+
+	alertsAlertAddCmd.Flags().String("metric", "", "Metric field")
+
+	alertsAlertAddCmd.Flags().Float64("limit", 0, "Limit field")
+
+	alertsAlertAddCmd.Flags().Bool("disabled", false, "Disabled field")
+
+	alertsAlertAddCmd.Flags().Bool("send-when-below", false, "SendWhenBelow field")
+
+	alertsAlertAddCmd.Flags().StringSlice("notifiers", nil, "Notifiers field")
 
 	alertsAlertAddCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -93,24 +149,40 @@ var alertsAlertShowCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: AlertShow
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		id, _ := cmd.Flags().GetString("id")
 
-		fmt.Println(render.RenderInfo("Command 'alert-show' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AlertShow(...)"))
+		result, err := client.AlertShow(ctx, app, id)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -118,6 +190,8 @@ var alertsAlertShowCmd = &cobra.Command{
 func initalertsAlertShowCmd() {
 
 	alertsAlertShowCmd.Flags().String("app", "", "app parameter")
+
+	alertsAlertShowCmd.Flags().String("id", "", "id parameter")
 
 	alertsAlertShowCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -128,27 +202,61 @@ var alertsAlertUpdateCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		params, _ := cmd.Flags().GetString("params")
+		id, _ := cmd.Flags().GetString("id")
 
-		// Method: AlertUpdate
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = params
+		containerTypeFlag, _ := cmd.Flags().GetString("container-type")
 
-		fmt.Println(render.RenderInfo("Command 'alert-update' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AlertUpdate(...)"))
+		metricFlag, _ := cmd.Flags().GetString("metric")
+
+		limitFlag, _ := cmd.Flags().GetFloat64("limit")
+
+		disabledFlag, _ := cmd.Flags().GetBool("disabled")
+
+		sendWhenBelowFlag, _ := cmd.Flags().GetBool("send-when-below")
+
+		notifiersFlag, _ := cmd.Flags().GetStringSlice("notifiers")
+
+		params := scalingo.AlertUpdateParams{
+			ContainerType: &containerTypeFlag,
+			Metric:        &metricFlag,
+			Limit:         &limitFlag,
+			Disabled:      &disabledFlag,
+			SendWhenBelow: &sendWhenBelowFlag,
+			Notifiers:     &notifiersFlag,
+		}
+
+		result, err := client.AlertUpdate(ctx, app, id, params)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -157,7 +265,19 @@ func initalertsAlertUpdateCmd() {
 
 	alertsAlertUpdateCmd.Flags().String("app", "", "app parameter")
 
-	alertsAlertUpdateCmd.Flags().String("params", "", "params (JSON format)")
+	alertsAlertUpdateCmd.Flags().String("id", "", "id parameter")
+
+	alertsAlertUpdateCmd.Flags().String("container-type", "", "ContainerType field")
+
+	alertsAlertUpdateCmd.Flags().String("metric", "", "Metric field")
+
+	alertsAlertUpdateCmd.Flags().Float64("limit", 0, "Limit field")
+
+	alertsAlertUpdateCmd.Flags().Bool("disabled", false, "Disabled field")
+
+	alertsAlertUpdateCmd.Flags().Bool("send-when-below", false, "SendWhenBelow field")
+
+	alertsAlertUpdateCmd.Flags().StringSlice("notifiers", nil, "Notifiers field")
 
 	alertsAlertUpdateCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -168,9 +288,15 @@ var alertsAlertRemoveCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
@@ -179,13 +305,14 @@ var alertsAlertRemoveCmd = &cobra.Command{
 
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: AlertRemove
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		id, _ := cmd.Flags().GetString("id")
 
-		fmt.Println(render.RenderInfo("Command 'alert-remove' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AlertRemove(...)"))
+		if err := client.AlertRemove(ctx, app, id); err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(render.RenderSuccess("alert-remove completed successfully"))
+
 		return nil
 	},
 }
@@ -193,6 +320,8 @@ var alertsAlertRemoveCmd = &cobra.Command{
 func initalertsAlertRemoveCmd() {
 
 	alertsAlertRemoveCmd.Flags().String("app", "", "app parameter")
+
+	alertsAlertRemoveCmd.Flags().String("id", "", "id parameter")
 
 	alertsAlertRemoveCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }

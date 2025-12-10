@@ -4,11 +4,11 @@ package commands
 import (
 	"context"
 	"fmt"
-	"os"
 
 	scalingo "github.com/Scalingo/go-scalingo/v8"
 	"github.com/spf13/cobra"
 
+	"generative-cli/config"
 	"generative-cli/render"
 )
 
@@ -18,9 +18,15 @@ var containersStopCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
@@ -29,13 +35,14 @@ var containersStopCmd = &cobra.Command{
 
 		appName, _ := cmd.Flags().GetString("app-name")
 
-		// Method: ContainersStop
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = appName
+		containerID, _ := cmd.Flags().GetString("container-i-d")
 
-		fmt.Println(render.RenderInfo("Command 'stop' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.ContainersStop(...)"))
+		if err := client.ContainersStop(ctx, appName, containerID); err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(render.RenderSuccess("stop completed successfully"))
+
 		return nil
 	},
 }
@@ -43,6 +50,8 @@ var containersStopCmd = &cobra.Command{
 func initcontainersStopCmd() {
 
 	containersStopCmd.Flags().String("app-name", "", "appName parameter")
+
+	containersStopCmd.Flags().String("container-i-d", "", "containerID parameter")
 
 	containersStopCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }

@@ -4,11 +4,11 @@ package commands
 import (
 	"context"
 	"fmt"
-	"os"
 
 	scalingo "github.com/Scalingo/go-scalingo/v8"
 	"github.com/spf13/cobra"
 
+	"generative-cli/config"
 	"generative-cli/render"
 )
 
@@ -18,21 +18,36 @@ var usersSelfCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
-		// Method: Self
-		// This is a generated stub - implement the actual SDK call
-		_ = client
+		outputFormat, _ := cmd.Flags().GetString("output")
 
-		fmt.Println(render.RenderInfo("Command 'self' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.Self(...)"))
+		result, err := client.Self(ctx)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -48,31 +63,54 @@ var usersUpdateUserCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
-		params, _ := cmd.Flags().GetString("params")
+		outputFormat, _ := cmd.Flags().GetString("output")
 
-		// Method: UpdateUser
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = params
+		passwordFlag, _ := cmd.Flags().GetString("password")
 
-		fmt.Println(render.RenderInfo("Command 'update-user' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.UpdateUser(...)"))
+		emailFlag, _ := cmd.Flags().GetString("email")
+
+		params := scalingo.UpdateUserParams{
+			Password: passwordFlag,
+			Email:    emailFlag,
+		}
+
+		result, err := client.UpdateUser(ctx, params)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
 
 func initusersUpdateUserCmd() {
 
-	usersUpdateUserCmd.Flags().String("params", "", "params (JSON format)")
+	usersUpdateUserCmd.Flags().String("password", "", "Password field")
+
+	usersUpdateUserCmd.Flags().String("email", "", "Email field")
 
 	usersUpdateUserCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -83,21 +121,27 @@ var usersUserStopFreeTrialCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
-		// Method: UserStopFreeTrial
-		// This is a generated stub - implement the actual SDK call
-		_ = client
+		if err := client.UserStopFreeTrial(ctx); err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(render.RenderSuccess("user-stop-free-trial completed successfully"))
 
-		fmt.Println(render.RenderInfo("Command 'user-stop-free-trial' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.UserStopFreeTrial(...)"))
 		return nil
 	},
 }

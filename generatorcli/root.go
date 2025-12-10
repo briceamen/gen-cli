@@ -7,6 +7,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// sdkPath is shared between generate and update-manifest commands
+var sdkPath string
+
 // NewRootCommand builds the root command for the generator CLI.
 func NewRootCommand() *cobra.Command {
 	rootCmd := &cobra.Command{

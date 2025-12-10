@@ -15,12 +15,13 @@ package commands
 
 import (
 	"context"
-	"fmt"
-	"os"
+	{{if .NeedsJSON}}"encoding/json"
+	{{end}}"fmt"
 
-	"github.com/spf13/cobra"
 	scalingo "github.com/Scalingo/go-scalingo/v8"
+	"github.com/spf13/cobra"
 
+	"generative-cli/config"
 	"generative-cli/render"
 )
 
@@ -31,25 +32,82 @@ var {{$cmd.VarName}} = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
-		{{range $cmd.FlagVars}}
-		{{.Name}}, _ := cmd.Flags().Get{{.GetterType}}("{{.FlagName}}")
-		{{end}}
 
-		// Method: {{$cmd.MethodName}}
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		{{range $cmd.FlagVars}}_ = {{.Name}}
+		{{if ne $cmd.RendererType "success"}}outputFormat, _ := cmd.Flags().GetString("output")
+		{{end}}{{range $cmd.FlagVars}}
+		{{if .NeedsJSON}}{{.Name}}JSON, _ := cmd.Flags().Get{{.GetterType}}("{{.FlagName}}")
+		var {{.Name}} {{.JSONType}}
+		if {{.Name}}JSON != "" {
+			if err := json.Unmarshal([]byte({{.Name}}JSON), &{{.Name}}); err != nil {
+				fmt.Println(render.RenderError(fmt.Errorf("invalid JSON for {{.FlagName}}: %w", err)))
+				return err
+			}
+		}{{else if .TypeCast}}{{.Name}}Raw, _ := cmd.Flags().Get{{.GetterType}}("{{.FlagName}}")
+		{{.Name}} := {{.TypeCast}}({{.Name}}Raw){{else}}{{.Name}}, _ := cmd.Flags().Get{{.GetterType}}("{{.FlagName}}"){{end}}
 		{{end}}
-		fmt.Println(render.RenderInfo("Command '{{$cmd.Use}}' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.{{$cmd.MethodName}}(...)"))
+		{{range $builder := $cmd.StructBuilders}}
+		{{$builder.VarName}} := {{if $builder.IsPointer}}&{{end}}scalingo.{{$builder.TypeName}}{
+			{{range $f := $builder.Fields}}{{if not $f.Skip}}{{$f.FieldName}}: {{if $f.NeedsDeref}}&{{end}}{{$f.FlagVar}},
+			{{end}}{{end}}
+		}
+		{{end}}
+		{{if $cmd.AutoPaginate}}
+		var allResults {{$cmd.ReturnTypeWithPkg}}
+		page := 1
+		for {
+			results, meta, err := client.{{$cmd.MethodName}}({{$cmd.SDKCallArgs}}, scalingo.PaginationOpts{Page: page, PerPage: 100})
+			if err != nil {
+				fmt.Println(render.RenderError(err))
+				return err
+			}
+			allResults = append(allResults, results...)
+			if meta.NextPage == 0 {
+				break
+			}
+			page = meta.NextPage
+		}
+		result := allResults
+		{{else if eq $cmd.RendererType "success"}}
+		if err := client.{{$cmd.MethodName}}({{$cmd.SDKCallArgs}}); err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(render.RenderSuccess("{{$cmd.Use}} completed successfully"))
+		{{else if $cmd.HasExtraReturn}}
+		result, _, err := client.{{$cmd.MethodName}}({{$cmd.SDKCallArgs}})
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		{{else}}
+		result, err := client.{{$cmd.MethodName}}({{$cmd.SDKCallArgs}})
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		{{end}}
+		{{if ne $cmd.RendererType "success"}}
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+		{{end}}
 		return nil
 	},
 }
@@ -78,14 +136,21 @@ func Register{{.ServiceName}}Commands(parent *cobra.Command) {
 
 // CommandDef represents a command to be generated
 type CommandDef struct {
-	VarName    string
-	Use        string
-	Short      string
-	MethodName string
-	MethodCall string
-	HasParams  bool
-	FlagVars   []FlagVar
-	Flags      []FlagDef
+	VarName           string
+	Use               string
+	Short             string
+	MethodName        string
+	MethodCall        string
+	HasParams         bool
+	FlagVars          []FlagVar
+	Flags             []FlagDef
+	RendererType      string          // "table", "detail", "success"
+	ReturnType        string          // Primary return type (e.g., "[]*App")
+	ReturnTypeWithPkg string          // Return type with scalingo package prefix (e.g., "[]*scalingo.App")
+	AutoPaginate      bool            // Whether to auto-fetch all pages
+	StructBuilders    []StructBuilder // Structs to build from flags
+	SDKCallArgs       string          // Arguments for SDK call (e.g., "ctx, app, opts")
+	HasExtraReturn    bool            // True if method returns (result, statusCode, error) pattern
 }
 
 // FlagVar represents a variable to read from flags
@@ -93,6 +158,9 @@ type FlagVar struct {
 	Name       string
 	FlagName   string
 	GetterType string
+	TypeCast   string // Type to cast to (e.g., "scalingo.SCMType"), empty if no cast needed
+	NeedsJSON  bool   // True if param needs JSON unmarshaling (complex types like Variables)
+	JSONType   string // Type for JSON unmarshal (e.g., "scalingo.Variables")
 }
 
 // FlagDef represents a flag definition
@@ -108,6 +176,7 @@ type ServiceFile struct {
 	ServiceName  string
 	ServiceLower string
 	Commands     []CommandDef
+	NeedsJSON    bool // True if any command needs JSON unmarshaling
 }
 
 const registerTemplate = `// Code generated by generative-cli. DO NOT EDIT.
@@ -122,7 +191,7 @@ func RegisterAll(parent *cobra.Command) {
 `
 
 // GenerateCommands generates Go code for the given methods
-func GenerateCommands(newMethods map[string][]Method, outputPath string) error {
+func GenerateCommands(newMethods map[string][]Method, structs map[string]ParsedStruct, outputPath string) error {
 	if err := os.MkdirAll(outputPath, 0755); err != nil {
 		return fmt.Errorf("failed to create output directory: %w", err)
 	}
@@ -143,8 +212,21 @@ func GenerateCommands(newMethods map[string][]Method, outputPath string) error {
 		}
 
 		for _, method := range methods {
-			cmd := methodToCommand(serviceName, method)
+			cmd := methodToCommand(serviceName, method, structs)
 			sf.Commands = append(sf.Commands, cmd)
+		}
+
+		// Check if any command needs JSON unmarshaling
+		for _, cmd := range sf.Commands {
+			for _, fv := range cmd.FlagVars {
+				if fv.NeedsJSON {
+					sf.NeedsJSON = true
+					break
+				}
+			}
+			if sf.NeedsJSON {
+				break
+			}
 		}
 
 		var buf bytes.Buffer
@@ -188,7 +270,7 @@ func GenerateCommands(newMethods map[string][]Method, outputPath string) error {
 	return nil
 }
 
-func methodToCommand(serviceName string, method Method) CommandDef {
+func methodToCommand(serviceName string, method Method, structs map[string]ParsedStruct) CommandDef {
 	// Convert method name to command use
 	// e.g., AppsList -> list, AppsCreate -> create
 	prefix := strings.TrimSuffix(serviceName, "Service")
@@ -203,34 +285,188 @@ func methodToCommand(serviceName string, method Method) CommandDef {
 	// Include service name in var to avoid conflicts between services
 	varPrefix := toCamelCase(strings.TrimSuffix(serviceName, "Service"))
 
+	// Get return type and renderer type
+	returnType := GetPrimaryReturnType(method)
+	rendererType := InferRendererType(returnType)
+	returnTypeWithPkg := addScalingoPrefix(returnType)
+
 	cmd := CommandDef{
-		VarName:    varPrefix + toPascalCase(use) + "Cmd",
-		Use:        use,
-		Short:      fmt.Sprintf("%s %s", prefix, use),
-		MethodName: method.Name,
-		HasParams:  len(method.Params) > 0,
+		VarName:           varPrefix + toPascalCase(use) + "Cmd",
+		Use:               use,
+		Short:             fmt.Sprintf("%s %s", prefix, use),
+		MethodName:        method.Name,
+		HasParams:         len(method.Params) > 0,
+		ReturnType:        returnType,
+		ReturnTypeWithPkg: returnTypeWithPkg,
+		RendererType:      rendererType,
 	}
 
-	// Build method call
-	var callParams []string
-	callParams = append(callParams, "ctx")
+	// Check for extra return value (like status code in VariableSet returning *Variable, int, error)
+	nonErrorReturns := 0
+	for _, ret := range method.Returns {
+		if !ret.IsError {
+			nonErrorReturns++
+		}
+	}
+	if nonErrorReturns > 1 {
+		cmd.HasExtraReturn = true
+	}
+
+	// Build method call arguments
+	var callArgs []string
+	callArgs = append(callArgs, "ctx")
 
 	for _, param := range method.Params {
-		flag := paramToFlag(param)
-		cmd.Flags = append(cmd.Flags, flag)
-
-		fv := FlagVar{
-			Name:       toCamelCase(param.Name),
-			FlagName:   toKebabCase(param.Name),
-			GetterType: flagGetterType(param.Type),
+		// Skip pagination params - handled separately for auto-pagination
+		if IsPaginationParam(param.Type) {
+			// Check if method supports auto-pagination (has PaginationOpts param and returns a slice)
+			if SupportsPagination(method) {
+				cmd.AutoPaginate = true
+			}
+			continue
 		}
-		cmd.FlagVars = append(cmd.FlagVars, fv)
-		callParams = append(callParams, toCamelCase(param.Name))
+
+		// Check if this is an expandable struct param (Opts/Params)
+		if IsExpandableParam(param.Type, structs) {
+			builder := expandStructParam(param, structs)
+			cmd.StructBuilders = append(cmd.StructBuilders, builder)
+			callArgs = append(callArgs, builder.VarName)
+
+			// Add flags for each struct field (skip complex types)
+			for _, field := range builder.Fields {
+				if field.Skip {
+					continue
+				}
+				cmd.Flags = append(cmd.Flags, structFieldToFlag(field))
+				cmd.FlagVars = append(cmd.FlagVars, FlagVar{
+					Name:       field.FlagVar,
+					FlagName:   field.FlagName,
+					GetterType: flagGetterType(field.FieldType),
+				})
+			}
+		} else {
+			// Simple parameter - create flag directly
+			flag := paramToFlag(param)
+			cmd.Flags = append(cmd.Flags, flag)
+
+			fv := FlagVar{
+				Name:       toCamelCase(param.Name),
+				FlagName:   toKebabCase(param.Name),
+				GetterType: flagGetterType(param.Type),
+			}
+
+			// Check if we need JSON unmarshaling for complex types
+			if needsJSONUnmarshal(param.Type) {
+				fv.NeedsJSON = true
+				fv.JSONType = "scalingo." + param.Type
+			} else if needsTypeCast(param.Type) {
+				// Check if we need a type cast for custom SDK types (simple aliases like SCMType)
+				fv.TypeCast = "scalingo." + param.Type
+			}
+
+			cmd.FlagVars = append(cmd.FlagVars, fv)
+			callArgs = append(callArgs, toCamelCase(param.Name))
+		}
 	}
 
-	cmd.MethodCall = fmt.Sprintf("%s(%s)", method.Name, strings.Join(callParams, ", "))
+	cmd.SDKCallArgs = strings.Join(callArgs, ", ")
+	cmd.MethodCall = fmt.Sprintf("%s(%s)", method.Name, cmd.SDKCallArgs)
 
 	return cmd
+}
+
+// expandStructParam creates a StructBuilder from a struct parameter
+func expandStructParam(param Param, structs map[string]ParsedStruct) StructBuilder {
+	baseType := strings.TrimPrefix(param.Type, "*")
+	ps := structs[baseType]
+
+	// Use a distinct variable name to avoid collisions with flag variables
+	// param.Name is often "opts" or "params", so we keep it as-is since it's used in the SDK call
+	builder := StructBuilder{
+		VarName:   toCamelCase(param.Name),
+		TypeName:  baseType,
+		IsPointer: strings.HasPrefix(param.Type, "*"),
+	}
+
+	for _, field := range ps.Fields {
+		// Skip unexported fields
+		if len(field.Name) == 0 || field.Name[0] < 'A' || field.Name[0] > 'Z' {
+			continue
+		}
+
+		// Add "Flag" suffix to avoid collision with struct variable
+		flagVar := toCamelCase(field.Name) + "Flag"
+
+		fm := StructFieldMapping{
+			FieldName: field.Name,
+			FlagVar:   flagVar,
+			FieldType: field.Type,
+			FlagName:  toKebabCasePreserveAcronyms(field.Name),
+			IsPointer: strings.HasPrefix(field.Type, "*"),
+		}
+
+		// Determine if we should skip complex types
+		baseFieldType := strings.TrimPrefix(field.Type, "*")
+		switch {
+		case strings.HasPrefix(baseFieldType, "map["):
+			fm.Skip = true
+		case strings.HasPrefix(baseFieldType, "[]") && baseFieldType != "[]string":
+			fm.Skip = true
+		case strings.Contains(baseFieldType, "."):
+			// Types from other packages (time.Duration, etc.)
+			fm.Skip = true
+		case baseFieldType == "interface{}":
+			fm.Skip = true
+		}
+
+		// For pointer types of simple types, we need to take address
+		if fm.IsPointer && !fm.Skip {
+			fm.NeedsDeref = true
+		}
+
+		builder.Fields = append(builder.Fields, fm)
+	}
+
+	return builder
+}
+
+// structFieldToFlag converts a struct field mapping to a flag definition
+func structFieldToFlag(field StructFieldMapping) FlagDef {
+	flag := FlagDef{
+		Name:  field.FlagName,
+		Usage: fmt.Sprintf("%s field", field.FieldName),
+	}
+
+	// Strip pointer prefix for type detection
+	baseType := strings.TrimPrefix(field.FieldType, "*")
+
+	switch baseType {
+	case "string":
+		flag.Type = "String"
+		flag.Default = `""`
+	case "int", "int64":
+		flag.Type = "Int"
+		flag.Default = "0"
+	case "uint", "uint64":
+		flag.Type = "Uint"
+		flag.Default = "0"
+	case "bool":
+		flag.Type = "Bool"
+		flag.Default = "false"
+	case "float64":
+		flag.Type = "Float64"
+		flag.Default = "0"
+	case "[]string":
+		flag.Type = "StringSlice"
+		flag.Default = "nil"
+	default:
+		// Complex nested types - accept as string (JSON or simple value)
+		flag.Type = "String"
+		flag.Default = `""`
+		flag.Usage = fmt.Sprintf("%s field (JSON or string)", field.FieldName)
+	}
+
+	return flag
 }
 
 func paramToFlag(param Param) FlagDef {
@@ -246,6 +482,9 @@ func paramToFlag(param Param) FlagDef {
 	case "int", "int64":
 		flag.Type = "Int"
 		flag.Default = "0"
+	case "uint", "uint64":
+		flag.Type = "Uint"
+		flag.Default = "0"
 	case "bool":
 		flag.Type = "Bool"
 		flag.Default = "false"
@@ -260,16 +499,118 @@ func paramToFlag(param Param) FlagDef {
 }
 
 func flagGetterType(paramType string) string {
-	switch paramType {
+	// Strip pointer prefix
+	baseType := strings.TrimPrefix(paramType, "*")
+
+	switch baseType {
 	case "string":
 		return "String"
 	case "int", "int64":
 		return "Int"
+	case "uint", "uint64":
+		return "Uint"
 	case "bool":
 		return "Bool"
+	case "float64":
+		return "Float64"
+	case "[]string":
+		return "StringSlice"
 	default:
 		return "String"
 	}
+}
+
+// needsJSONUnmarshal checks if a param type needs JSON unmarshaling
+// This is for complex types like Variables ([]*Variable) that can't be type cast
+func needsJSONUnmarshal(paramType string) bool {
+	// Known complex type aliases that need JSON unmarshaling
+	complexTypes := map[string]bool{
+		"Variables": true, // []*Variable
+	}
+	baseType := strings.TrimPrefix(paramType, "*")
+	return complexTypes[baseType]
+}
+
+// needsTypeCast checks if a param type needs to be cast from a basic type to a custom SDK type
+// This handles type aliases like "type SCMType string"
+func needsTypeCast(paramType string) bool {
+	// Basic Go types don't need cast
+	basicTypes := map[string]bool{
+		"string": true, "int": true, "int64": true, "int32": true,
+		"uint": true, "uint64": true, "uint32": true,
+		"float64": true, "float32": true, "bool": true, "byte": true,
+		"error": true, "interface{}": true,
+	}
+
+	// Strip pointer prefix
+	baseType := strings.TrimPrefix(paramType, "*")
+
+	// Don't cast basic types
+	if basicTypes[baseType] {
+		return false
+	}
+
+	// Don't cast slices, maps, or types from other packages
+	if strings.HasPrefix(baseType, "[]") ||
+		strings.HasPrefix(baseType, "map[") ||
+		strings.Contains(baseType, ".") {
+		return false
+	}
+
+	// Known slice type aliases that can't be cast from string
+	// These types need JSON unmarshaling, not simple type casting
+	sliceTypeAliases := map[string]bool{
+		"Variables": true, // []*Variable
+	}
+	if sliceTypeAliases[baseType] {
+		return false
+	}
+
+	// This is a custom SDK type alias (like SCMType, Status, etc.)
+	return true
+}
+
+// addScalingoPrefix adds the scalingo. package prefix to custom types
+// e.g., "[]*App" -> "[]*scalingo.App", "map[string]string" -> "map[string]string"
+func addScalingoPrefix(returnType string) string {
+	if returnType == "" {
+		return returnType
+	}
+
+	// Handle slice prefix
+	if strings.HasPrefix(returnType, "[]") {
+		inner := strings.TrimPrefix(returnType, "[]")
+		return "[]" + addScalingoPrefix(inner)
+	}
+
+	// Handle pointer prefix
+	if strings.HasPrefix(returnType, "*") {
+		inner := strings.TrimPrefix(returnType, "*")
+		return "*" + addScalingoPrefix(inner)
+	}
+
+	// Don't prefix built-in types
+	builtins := map[string]bool{
+		"string": true, "int": true, "int64": true, "int32": true,
+		"float64": true, "float32": true, "bool": true, "byte": true,
+		"error": true, "interface{}": true,
+	}
+	if builtins[returnType] {
+		return returnType
+	}
+
+	// Don't prefix types that already have a package
+	if strings.Contains(returnType, ".") {
+		return returnType
+	}
+
+	// Don't prefix map types (too complex)
+	if strings.HasPrefix(returnType, "map[") {
+		return returnType
+	}
+
+	// Add scalingo prefix
+	return "scalingo." + returnType
 }
 
 func toSnakeCase(s string) string {
@@ -285,6 +626,38 @@ func toSnakeCase(s string) string {
 
 func toKebabCase(s string) string {
 	return strings.ReplaceAll(toSnakeCase(s), "_", "-")
+}
+
+// toKebabCasePreserveAcronyms converts to kebab-case while preserving common acronyms
+// e.g., "StackID" -> "stack-id", "HTTPS" -> "https", "ProjectID" -> "project-id"
+func toKebabCasePreserveAcronyms(s string) string {
+	// Common acronyms to preserve
+	acronyms := []string{"ID", "URL", "HTTP", "HTTPS", "API", "UUID", "SSH", "TLS", "DNS", "TCP", "UDP", "IP"}
+
+	result := s
+	// Replace acronyms temporarily with a placeholder
+	for i, acr := range acronyms {
+		placeholder := fmt.Sprintf("__ACR%d__", i)
+		result = strings.ReplaceAll(result, acr, placeholder)
+	}
+
+	// Apply snake case
+	var snaked strings.Builder
+	for i, r := range result {
+		if i > 0 && r >= 'A' && r <= 'Z' {
+			snaked.WriteRune('_')
+		}
+		snaked.WriteRune(r)
+	}
+	result = strings.ToLower(snaked.String())
+
+	// Restore acronyms as lowercase
+	for i, acr := range acronyms {
+		placeholder := fmt.Sprintf("__acr%d__", i)
+		result = strings.ReplaceAll(result, placeholder, strings.ToLower(acr))
+	}
+
+	return strings.ReplaceAll(result, "_", "-")
 }
 
 func toCamelCase(s string) string {

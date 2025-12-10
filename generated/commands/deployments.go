@@ -4,11 +4,11 @@ package commands
 import (
 	"context"
 	"fmt"
-	"os"
 
 	scalingo "github.com/Scalingo/go-scalingo/v8"
 	"github.com/spf13/cobra"
 
+	"generative-cli/config"
 	"generative-cli/render"
 )
 
@@ -18,24 +18,38 @@ var deploymentsDeploymentListCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: DeploymentList
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		result, err := client.DeploymentList(ctx, app)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'deployment-list' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.DeploymentList(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -53,27 +67,48 @@ var deploymentsDeploymentListWithPaginationCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		opts, _ := cmd.Flags().GetString("opts")
+		var allResults []*scalingo.Deployment
+		page := 1
+		for {
+			results, meta, err := client.DeploymentListWithPagination(ctx, app, scalingo.PaginationOpts{Page: page, PerPage: 100})
+			if err != nil {
+				fmt.Println(render.RenderError(err))
+				return err
+			}
+			allResults = append(allResults, results...)
+			if meta.NextPage == 0 {
+				break
+			}
+			page = meta.NextPage
+		}
+		result := allResults
 
-		// Method: DeploymentListWithPagination
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = opts
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
 
-		fmt.Println(render.RenderInfo("Command 'deployment-list-with-pagination' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.DeploymentListWithPagination(...)"))
 		return nil
 	},
 }
@@ -81,8 +116,6 @@ var deploymentsDeploymentListWithPaginationCmd = &cobra.Command{
 func initdeploymentsDeploymentListWithPaginationCmd() {
 
 	deploymentsDeploymentListWithPaginationCmd.Flags().String("app", "", "app parameter")
-
-	deploymentsDeploymentListWithPaginationCmd.Flags().String("opts", "", "opts (JSON format)")
 
 	deploymentsDeploymentListWithPaginationCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -93,27 +126,40 @@ var deploymentsDeploymentCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
 		deploy, _ := cmd.Flags().GetString("deploy")
 
-		// Method: Deployment
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = deploy
+		result, err := client.Deployment(ctx, app, deploy)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'deployment' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.Deployment(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -133,24 +179,38 @@ var deploymentsDeploymentLogsCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		deployURL, _ := cmd.Flags().GetString("deploy-u-r-l")
 
-		// Method: DeploymentLogs
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = deployURL
+		result, err := client.DeploymentLogs(ctx, deployURL)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'deployment-logs' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.DeploymentLogs(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -168,24 +228,38 @@ var deploymentsDeploymentStreamCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		deployURL, _ := cmd.Flags().GetString("deploy-u-r-l")
 
-		// Method: DeploymentStream
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = deployURL
+		result, err := client.DeploymentStream(ctx, deployURL)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'deployment-stream' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.DeploymentStream(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -203,27 +277,47 @@ var deploymentsCreateCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		params, _ := cmd.Flags().GetString("params")
+		gitRefFlag, _ := cmd.Flags().GetString("git-ref")
 
-		// Method: DeploymentsCreate
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = params
+		sourceURLFlag, _ := cmd.Flags().GetString("source---a-c-r1--")
 
-		fmt.Println(render.RenderInfo("Command 'create' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.DeploymentsCreate(...)"))
+		params := &scalingo.DeploymentsCreateParams{
+			GitRef:    &gitRefFlag,
+			SourceURL: sourceURLFlag,
+		}
+
+		result, err := client.DeploymentsCreate(ctx, app, params)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -232,7 +326,9 @@ func initdeploymentsCreateCmd() {
 
 	deploymentsCreateCmd.Flags().String("app", "", "app parameter")
 
-	deploymentsCreateCmd.Flags().String("params", "", "params (JSON format)")
+	deploymentsCreateCmd.Flags().String("git-ref", "", "GitRef field")
+
+	deploymentsCreateCmd.Flags().String("source---a-c-r1--", "", "SourceURL field")
 
 	deploymentsCreateCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }

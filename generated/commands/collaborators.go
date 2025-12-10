@@ -4,11 +4,11 @@ package commands
 import (
 	"context"
 	"fmt"
-	"os"
 
 	scalingo "github.com/Scalingo/go-scalingo/v8"
 	"github.com/spf13/cobra"
 
+	"generative-cli/config"
 	"generative-cli/render"
 )
 
@@ -18,24 +18,38 @@ var collaboratorsListCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: CollaboratorsList
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		result, err := client.CollaboratorsList(ctx, app)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'list' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.CollaboratorsList(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -53,27 +67,47 @@ var collaboratorsCollaboratorAddCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		params, _ := cmd.Flags().GetString("params")
+		emailFlag, _ := cmd.Flags().GetString("email")
 
-		// Method: CollaboratorAdd
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = params
+		isLimitedFlag, _ := cmd.Flags().GetBool("is-limited")
 
-		fmt.Println(render.RenderInfo("Command 'collaborator-add' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.CollaboratorAdd(...)"))
+		params := scalingo.CollaboratorAddParams{
+			Email:     emailFlag,
+			IsLimited: isLimitedFlag,
+		}
+
+		result, err := client.CollaboratorAdd(ctx, app, params)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -82,7 +116,9 @@ func initcollaboratorsCollaboratorAddCmd() {
 
 	collaboratorsCollaboratorAddCmd.Flags().String("app", "", "app parameter")
 
-	collaboratorsCollaboratorAddCmd.Flags().String("params", "", "params (JSON format)")
+	collaboratorsCollaboratorAddCmd.Flags().String("email", "", "Email field")
+
+	collaboratorsCollaboratorAddCmd.Flags().Bool("is-limited", false, "IsLimited field")
 
 	collaboratorsCollaboratorAddCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -93,9 +129,15 @@ var collaboratorsCollaboratorRemoveCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
@@ -104,13 +146,14 @@ var collaboratorsCollaboratorRemoveCmd = &cobra.Command{
 
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: CollaboratorRemove
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		collaboratorID, _ := cmd.Flags().GetString("collaborator-i-d")
 
-		fmt.Println(render.RenderInfo("Command 'collaborator-remove' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.CollaboratorRemove(...)"))
+		if err := client.CollaboratorRemove(ctx, app, collaboratorID); err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(render.RenderSuccess("collaborator-remove completed successfully"))
+
 		return nil
 	},
 }
@@ -118,6 +161,8 @@ var collaboratorsCollaboratorRemoveCmd = &cobra.Command{
 func initcollaboratorsCollaboratorRemoveCmd() {
 
 	collaboratorsCollaboratorRemoveCmd.Flags().String("app", "", "app parameter")
+
+	collaboratorsCollaboratorRemoveCmd.Flags().String("collaborator-i-d", "", "collaboratorID parameter")
 
 	collaboratorsCollaboratorRemoveCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -128,27 +173,46 @@ var collaboratorsCollaboratorUpdateCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		params, _ := cmd.Flags().GetString("params")
+		collaboratorID, _ := cmd.Flags().GetString("collaborator-i-d")
 
-		// Method: CollaboratorUpdate
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = params
+		isLimitedFlag, _ := cmd.Flags().GetBool("is-limited")
 
-		fmt.Println(render.RenderInfo("Command 'collaborator-update' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.CollaboratorUpdate(...)"))
+		params := scalingo.CollaboratorUpdateParams{
+			IsLimited: isLimitedFlag,
+		}
+
+		result, err := client.CollaboratorUpdate(ctx, app, collaboratorID, params)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -157,7 +221,9 @@ func initcollaboratorsCollaboratorUpdateCmd() {
 
 	collaboratorsCollaboratorUpdateCmd.Flags().String("app", "", "app parameter")
 
-	collaboratorsCollaboratorUpdateCmd.Flags().String("params", "", "params (JSON format)")
+	collaboratorsCollaboratorUpdateCmd.Flags().String("collaborator-i-d", "", "collaboratorID parameter")
+
+	collaboratorsCollaboratorUpdateCmd.Flags().Bool("is-limited", false, "IsLimited field")
 
 	collaboratorsCollaboratorUpdateCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }

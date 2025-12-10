@@ -4,11 +4,11 @@ package commands
 import (
 	"context"
 	"fmt"
-	"os"
 
 	scalingo "github.com/Scalingo/go-scalingo/v8"
 	"github.com/spf13/cobra"
 
+	"generative-cli/config"
 	"generative-cli/render"
 )
 
@@ -18,24 +18,40 @@ var databasesDatabaseShowCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: DatabaseShow
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		addonID, _ := cmd.Flags().GetString("addon-i-d")
 
-		fmt.Println(render.RenderInfo("Command 'database-show' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.DatabaseShow(...)"))
+		result, err := client.DatabaseShow(ctx, app, addonID)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -43,6 +59,8 @@ var databasesDatabaseShowCmd = &cobra.Command{
 func initdatabasesDatabaseShowCmd() {
 
 	databasesDatabaseShowCmd.Flags().String("app", "", "app parameter")
+
+	databasesDatabaseShowCmd.Flags().String("addon-i-d", "", "addonID parameter")
 
 	databasesDatabaseShowCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -53,24 +71,42 @@ var databasesDatabaseEnableFeatureCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: DatabaseEnableFeature
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		addonID, _ := cmd.Flags().GetString("addon-i-d")
 
-		fmt.Println(render.RenderInfo("Command 'database-enable-feature' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.DatabaseEnableFeature(...)"))
+		feature, _ := cmd.Flags().GetString("feature")
+
+		result, err := client.DatabaseEnableFeature(ctx, app, addonID, feature)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -78,6 +114,10 @@ var databasesDatabaseEnableFeatureCmd = &cobra.Command{
 func initdatabasesDatabaseEnableFeatureCmd() {
 
 	databasesDatabaseEnableFeatureCmd.Flags().String("app", "", "app parameter")
+
+	databasesDatabaseEnableFeatureCmd.Flags().String("addon-i-d", "", "addonID parameter")
+
+	databasesDatabaseEnableFeatureCmd.Flags().String("feature", "", "feature parameter")
 
 	databasesDatabaseEnableFeatureCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -88,24 +128,42 @@ var databasesDatabaseDisableFeatureCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: DatabaseDisableFeature
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		addonID, _ := cmd.Flags().GetString("addon-i-d")
 
-		fmt.Println(render.RenderInfo("Command 'database-disable-feature' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.DatabaseDisableFeature(...)"))
+		feature, _ := cmd.Flags().GetString("feature")
+
+		result, err := client.DatabaseDisableFeature(ctx, app, addonID, feature)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -113,6 +171,10 @@ var databasesDatabaseDisableFeatureCmd = &cobra.Command{
 func initdatabasesDatabaseDisableFeatureCmd() {
 
 	databasesDatabaseDisableFeatureCmd.Flags().String("app", "", "app parameter")
+
+	databasesDatabaseDisableFeatureCmd.Flags().String("addon-i-d", "", "addonID parameter")
+
+	databasesDatabaseDisableFeatureCmd.Flags().String("feature", "", "feature parameter")
 
 	databasesDatabaseDisableFeatureCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -123,27 +185,49 @@ var databasesDatabaseUpdatePeriodicBackupsConfigCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		params, _ := cmd.Flags().GetString("params")
+		addonID, _ := cmd.Flags().GetString("addon-i-d")
 
-		// Method: DatabaseUpdatePeriodicBackupsConfig
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = params
+		scheduledAtFlag, _ := cmd.Flags().GetInt("scheduled-at")
 
-		fmt.Println(render.RenderInfo("Command 'database-update-periodic-backups-config' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.DatabaseUpdatePeriodicBackupsConfig(...)"))
+		enabledFlag, _ := cmd.Flags().GetBool("enabled")
+
+		params := scalingo.DatabaseUpdatePeriodicBackupsConfigParams{
+			ScheduledAt: &scheduledAtFlag,
+			Enabled:     &enabledFlag,
+		}
+
+		result, err := client.DatabaseUpdatePeriodicBackupsConfig(ctx, app, addonID, params)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -152,7 +236,11 @@ func initdatabasesDatabaseUpdatePeriodicBackupsConfigCmd() {
 
 	databasesDatabaseUpdatePeriodicBackupsConfigCmd.Flags().String("app", "", "app parameter")
 
-	databasesDatabaseUpdatePeriodicBackupsConfigCmd.Flags().String("params", "", "params (JSON format)")
+	databasesDatabaseUpdatePeriodicBackupsConfigCmd.Flags().String("addon-i-d", "", "addonID parameter")
+
+	databasesDatabaseUpdatePeriodicBackupsConfigCmd.Flags().Int("scheduled-at", 0, "ScheduledAt field")
+
+	databasesDatabaseUpdatePeriodicBackupsConfigCmd.Flags().Bool("enabled", false, "Enabled field")
 
 	databasesDatabaseUpdatePeriodicBackupsConfigCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -163,27 +251,49 @@ var databasesDatabaseUpdateMaintenanceWindowCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		params, _ := cmd.Flags().GetString("params")
+		addonID, _ := cmd.Flags().GetString("addon-i-d")
 
-		// Method: DatabaseUpdateMaintenanceWindow
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = params
+		weekdayUTCFlag, _ := cmd.Flags().GetInt("weekday-u-t-c")
 
-		fmt.Println(render.RenderInfo("Command 'database-update-maintenance-window' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.DatabaseUpdateMaintenanceWindow(...)"))
+		startingHourUTCFlag, _ := cmd.Flags().GetInt("starting-hour-u-t-c")
+
+		params := scalingo.MaintenanceWindowParams{
+			WeekdayUTC:      &weekdayUTCFlag,
+			StartingHourUTC: &startingHourUTCFlag,
+		}
+
+		result, err := client.DatabaseUpdateMaintenanceWindow(ctx, app, addonID, params)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -192,7 +302,11 @@ func initdatabasesDatabaseUpdateMaintenanceWindowCmd() {
 
 	databasesDatabaseUpdateMaintenanceWindowCmd.Flags().String("app", "", "app parameter")
 
-	databasesDatabaseUpdateMaintenanceWindowCmd.Flags().String("params", "", "params (JSON format)")
+	databasesDatabaseUpdateMaintenanceWindowCmd.Flags().String("addon-i-d", "", "addonID parameter")
+
+	databasesDatabaseUpdateMaintenanceWindowCmd.Flags().Int("weekday-u-t-c", 0, "WeekdayUTC field")
+
+	databasesDatabaseUpdateMaintenanceWindowCmd.Flags().Int("starting-hour-u-t-c", 0, "StartingHourUTC field")
 
 	databasesDatabaseUpdateMaintenanceWindowCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -203,27 +317,50 @@ var databasesDatabaseListMaintenanceCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		opts, _ := cmd.Flags().GetString("opts")
+		addonID, _ := cmd.Flags().GetString("addon-i-d")
 
-		// Method: DatabaseListMaintenance
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = opts
+		var allResults []*scalingo.Maintenance
+		page := 1
+		for {
+			results, meta, err := client.DatabaseListMaintenance(ctx, app, addonID, scalingo.PaginationOpts{Page: page, PerPage: 100})
+			if err != nil {
+				fmt.Println(render.RenderError(err))
+				return err
+			}
+			allResults = append(allResults, results...)
+			if meta.NextPage == 0 {
+				break
+			}
+			page = meta.NextPage
+		}
+		result := allResults
 
-		fmt.Println(render.RenderInfo("Command 'database-list-maintenance' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.DatabaseListMaintenance(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -232,7 +369,7 @@ func initdatabasesDatabaseListMaintenanceCmd() {
 
 	databasesDatabaseListMaintenanceCmd.Flags().String("app", "", "app parameter")
 
-	databasesDatabaseListMaintenanceCmd.Flags().String("opts", "", "opts (JSON format)")
+	databasesDatabaseListMaintenanceCmd.Flags().String("addon-i-d", "", "addonID parameter")
 
 	databasesDatabaseListMaintenanceCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -243,24 +380,42 @@ var databasesDatabaseShowMaintenanceCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: DatabaseShowMaintenance
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		addonID, _ := cmd.Flags().GetString("addon-i-d")
 
-		fmt.Println(render.RenderInfo("Command 'database-show-maintenance' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.DatabaseShowMaintenance(...)"))
+		maintenanceID, _ := cmd.Flags().GetString("maintenance-i-d")
+
+		result, err := client.DatabaseShowMaintenance(ctx, app, addonID, maintenanceID)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -268,6 +423,10 @@ var databasesDatabaseShowMaintenanceCmd = &cobra.Command{
 func initdatabasesDatabaseShowMaintenanceCmd() {
 
 	databasesDatabaseShowMaintenanceCmd.Flags().String("app", "", "app parameter")
+
+	databasesDatabaseShowMaintenanceCmd.Flags().String("addon-i-d", "", "addonID parameter")
+
+	databasesDatabaseShowMaintenanceCmd.Flags().String("maintenance-i-d", "", "maintenanceID parameter")
 
 	databasesDatabaseShowMaintenanceCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }

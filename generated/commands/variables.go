@@ -3,12 +3,13 @@ package commands
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
-	"os"
 
 	scalingo "github.com/Scalingo/go-scalingo/v8"
 	"github.com/spf13/cobra"
 
+	"generative-cli/config"
 	"generative-cli/render"
 )
 
@@ -18,24 +19,38 @@ var variablesListCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: VariablesList
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		result, err := client.VariablesList(ctx, app)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'list' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.VariablesList(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -53,24 +68,38 @@ var variablesListWithoutAliasCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: VariablesListWithoutAlias
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		result, err := client.VariablesListWithoutAlias(ctx, app)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'list-without-alias' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.VariablesListWithoutAlias(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -88,14 +117,22 @@ var variablesVariableSetCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
+
+		outputFormat, _ := cmd.Flags().GetString("output")
 
 		app, _ := cmd.Flags().GetString("app")
 
@@ -103,15 +140,19 @@ var variablesVariableSetCmd = &cobra.Command{
 
 		value, _ := cmd.Flags().GetString("value")
 
-		// Method: VariableSet
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = name
-		_ = value
+		result, _, err := client.VariableSet(ctx, app, name, value)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'variable-set' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.VariableSet(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -133,27 +174,47 @@ var variablesVariableMultipleSetCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		variables, _ := cmd.Flags().GetString("variables")
+		variablesJSON, _ := cmd.Flags().GetString("variables")
+		var variables scalingo.Variables
+		if variablesJSON != "" {
+			if err := json.Unmarshal([]byte(variablesJSON), &variables); err != nil {
+				fmt.Println(render.RenderError(fmt.Errorf("invalid JSON for variables: %w", err)))
+				return err
+			}
+		}
 
-		// Method: VariableMultipleSet
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = variables
+		result, _, err := client.VariableMultipleSet(ctx, app, variables)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'variable-multiple-set' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.VariableMultipleSet(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -173,9 +234,15 @@ var variablesVariableUnsetCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
@@ -186,14 +253,12 @@ var variablesVariableUnsetCmd = &cobra.Command{
 
 		id, _ := cmd.Flags().GetString("id")
 
-		// Method: VariableUnset
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = id
+		if err := client.VariableUnset(ctx, app, id); err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(render.RenderSuccess("variable-unset completed successfully"))
 
-		fmt.Println(render.RenderInfo("Command 'variable-unset' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.VariableUnset(...)"))
 		return nil
 	},
 }

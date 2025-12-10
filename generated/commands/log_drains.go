@@ -4,11 +4,11 @@ package commands
 import (
 	"context"
 	"fmt"
-	"os"
 
 	scalingo "github.com/Scalingo/go-scalingo/v8"
 	"github.com/spf13/cobra"
 
+	"generative-cli/config"
 	"generative-cli/render"
 )
 
@@ -18,24 +18,38 @@ var logDrainsListCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: LogDrainsList
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		result, err := client.LogDrainsList(ctx, app)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'list' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.LogDrainsList(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -53,27 +67,59 @@ var logDrainsLogDrainAddCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		params, _ := cmd.Flags().GetString("params")
+		typeFlag, _ := cmd.Flags().GetString("type")
 
-		// Method: LogDrainAdd
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = params
+		uRLFlag, _ := cmd.Flags().GetString("---a-c-r1--")
 
-		fmt.Println(render.RenderInfo("Command 'log-drain-add' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.LogDrainAdd(...)"))
+		portFlag, _ := cmd.Flags().GetString("port")
+
+		hostFlag, _ := cmd.Flags().GetString("host")
+
+		tokenFlag, _ := cmd.Flags().GetString("token")
+
+		drainRegionFlag, _ := cmd.Flags().GetString("drain-region")
+
+		params := scalingo.LogDrainAddParams{
+			Type:        typeFlag,
+			URL:         uRLFlag,
+			Port:        portFlag,
+			Host:        hostFlag,
+			Token:       tokenFlag,
+			DrainRegion: drainRegionFlag,
+		}
+
+		result, err := client.LogDrainAdd(ctx, app, params)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -82,7 +128,17 @@ func initlogDrainsLogDrainAddCmd() {
 
 	logDrainsLogDrainAddCmd.Flags().String("app", "", "app parameter")
 
-	logDrainsLogDrainAddCmd.Flags().String("params", "", "params (JSON format)")
+	logDrainsLogDrainAddCmd.Flags().String("type", "", "Type field")
+
+	logDrainsLogDrainAddCmd.Flags().String("---a-c-r1--", "", "URL field")
+
+	logDrainsLogDrainAddCmd.Flags().String("port", "", "Port field")
+
+	logDrainsLogDrainAddCmd.Flags().String("host", "", "Host field")
+
+	logDrainsLogDrainAddCmd.Flags().String("token", "", "Token field")
+
+	logDrainsLogDrainAddCmd.Flags().String("drain-region", "", "DrainRegion field")
 
 	logDrainsLogDrainAddCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -93,44 +149,15 @@ var logDrainsLogDrainRemoveCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
-		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
-		})
+		authToken, err := config.C.LoadAuth()
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
-		app, _ := cmd.Flags().GetString("app")
-
-		// Method: LogDrainRemove
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-
-		fmt.Println(render.RenderInfo("Command 'log-drain-remove' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.LogDrainRemove(...)"))
-		return nil
-	},
-}
-
-func initlogDrainsLogDrainRemoveCmd() {
-
-	logDrainsLogDrainRemoveCmd.Flags().String("app", "", "app parameter")
-
-	logDrainsLogDrainRemoveCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
-}
-
-var logDrainsLogDrainAddonRemoveCmd = &cobra.Command{
-	Use:   "log-drain-addon-remove",
-	Short: "LogDrains log-drain-addon-remove",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		ctx := context.Background()
-
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
@@ -141,14 +168,58 @@ var logDrainsLogDrainAddonRemoveCmd = &cobra.Command{
 
 		uRL, _ := cmd.Flags().GetString("u-r-l")
 
-		// Method: LogDrainAddonRemove
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = uRL
+		if err := client.LogDrainRemove(ctx, app, uRL); err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(render.RenderSuccess("log-drain-remove completed successfully"))
 
-		fmt.Println(render.RenderInfo("Command 'log-drain-addon-remove' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.LogDrainAddonRemove(...)"))
+		return nil
+	},
+}
+
+func initlogDrainsLogDrainRemoveCmd() {
+
+	logDrainsLogDrainRemoveCmd.Flags().String("app", "", "app parameter")
+
+	logDrainsLogDrainRemoveCmd.Flags().String("u-r-l", "", "URL parameter")
+
+	logDrainsLogDrainRemoveCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
+}
+
+var logDrainsLogDrainAddonRemoveCmd = &cobra.Command{
+	Use:   "log-drain-addon-remove",
+	Short: "LogDrains log-drain-addon-remove",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		ctx := context.Background()
+
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		client, err := scalingo.New(ctx, scalingo.ClientConfig{
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
+		})
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		app, _ := cmd.Flags().GetString("app")
+
+		addonID, _ := cmd.Flags().GetString("addon-i-d")
+
+		uRL, _ := cmd.Flags().GetString("u-r-l")
+
+		if err := client.LogDrainAddonRemove(ctx, app, addonID, uRL); err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(render.RenderSuccess("log-drain-addon-remove completed successfully"))
+
 		return nil
 	},
 }
@@ -156,6 +227,8 @@ var logDrainsLogDrainAddonRemoveCmd = &cobra.Command{
 func initlogDrainsLogDrainAddonRemoveCmd() {
 
 	logDrainsLogDrainAddonRemoveCmd.Flags().String("app", "", "app parameter")
+
+	logDrainsLogDrainAddonRemoveCmd.Flags().String("addon-i-d", "", "addonID parameter")
 
 	logDrainsLogDrainAddonRemoveCmd.Flags().String("u-r-l", "", "URL parameter")
 
@@ -168,27 +241,40 @@ var logDrainsAddonListCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
 		addonID, _ := cmd.Flags().GetString("addon-i-d")
 
-		// Method: LogDrainsAddonList
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = addonID
+		result, err := client.LogDrainsAddonList(ctx, app, addonID)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'addon-list' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.LogDrainsAddonList(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -208,30 +294,61 @@ var logDrainsLogDrainAddonAddCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
 		addonID, _ := cmd.Flags().GetString("addon-i-d")
 
-		params, _ := cmd.Flags().GetString("params")
+		typeFlag, _ := cmd.Flags().GetString("type")
 
-		// Method: LogDrainAddonAdd
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = addonID
-		_ = params
+		uRLFlag, _ := cmd.Flags().GetString("---a-c-r1--")
 
-		fmt.Println(render.RenderInfo("Command 'log-drain-addon-add' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.LogDrainAddonAdd(...)"))
+		portFlag, _ := cmd.Flags().GetString("port")
+
+		hostFlag, _ := cmd.Flags().GetString("host")
+
+		tokenFlag, _ := cmd.Flags().GetString("token")
+
+		drainRegionFlag, _ := cmd.Flags().GetString("drain-region")
+
+		params := scalingo.LogDrainAddParams{
+			Type:        typeFlag,
+			URL:         uRLFlag,
+			Port:        portFlag,
+			Host:        hostFlag,
+			Token:       tokenFlag,
+			DrainRegion: drainRegionFlag,
+		}
+
+		result, err := client.LogDrainAddonAdd(ctx, app, addonID, params)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -242,7 +359,17 @@ func initlogDrainsLogDrainAddonAddCmd() {
 
 	logDrainsLogDrainAddonAddCmd.Flags().String("addon-i-d", "", "addonID parameter")
 
-	logDrainsLogDrainAddonAddCmd.Flags().String("params", "", "params (JSON format)")
+	logDrainsLogDrainAddonAddCmd.Flags().String("type", "", "Type field")
+
+	logDrainsLogDrainAddonAddCmd.Flags().String("---a-c-r1--", "", "URL field")
+
+	logDrainsLogDrainAddonAddCmd.Flags().String("port", "", "Port field")
+
+	logDrainsLogDrainAddonAddCmd.Flags().String("host", "", "Host field")
+
+	logDrainsLogDrainAddonAddCmd.Flags().String("token", "", "Token field")
+
+	logDrainsLogDrainAddonAddCmd.Flags().String("drain-region", "", "DrainRegion field")
 
 	logDrainsLogDrainAddonAddCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }

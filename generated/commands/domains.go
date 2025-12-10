@@ -4,11 +4,11 @@ package commands
 import (
 	"context"
 	"fmt"
-	"os"
 
 	scalingo "github.com/Scalingo/go-scalingo/v8"
 	"github.com/spf13/cobra"
 
+	"generative-cli/config"
 	"generative-cli/render"
 )
 
@@ -18,24 +18,38 @@ var domainsListCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: DomainsList
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		result, err := client.DomainsList(ctx, app)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'list' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.DomainsList(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -53,27 +67,56 @@ var domainsAddCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		d, _ := cmd.Flags().GetString("d")
+		nameFlag, _ := cmd.Flags().GetString("name")
 
-		// Method: DomainsAdd
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = d
+		canonicalFlag, _ := cmd.Flags().GetBool("canonical")
 
-		fmt.Println(render.RenderInfo("Command 'add' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.DomainsAdd(...)"))
+		tLSCertFlag, _ := cmd.Flags().GetString("---a-c-r7---cert")
+
+		tLSKeyFlag, _ := cmd.Flags().GetString("---a-c-r7---key")
+
+		letsEncryptEnabledFlag, _ := cmd.Flags().GetBool("lets-encrypt-enabled")
+
+		d := scalingo.DomainsAddParams{
+			Name:               nameFlag,
+			Canonical:          &canonicalFlag,
+			TLSCert:            &tLSCertFlag,
+			TLSKey:             &tLSKeyFlag,
+			LetsEncryptEnabled: &letsEncryptEnabledFlag,
+		}
+
+		result, err := client.DomainsAdd(ctx, app, d)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -82,7 +125,15 @@ func initdomainsAddCmd() {
 
 	domainsAddCmd.Flags().String("app", "", "app parameter")
 
-	domainsAddCmd.Flags().String("d", "", "d (JSON format)")
+	domainsAddCmd.Flags().String("name", "", "Name field")
+
+	domainsAddCmd.Flags().Bool("canonical", false, "Canonical field")
+
+	domainsAddCmd.Flags().String("---a-c-r7---cert", "", "TLSCert field")
+
+	domainsAddCmd.Flags().String("---a-c-r7---key", "", "TLSKey field")
+
+	domainsAddCmd.Flags().Bool("lets-encrypt-enabled", false, "LetsEncryptEnabled field")
 
 	domainsAddCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -93,30 +144,55 @@ var domainsUpdateCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
 		id, _ := cmd.Flags().GetString("id")
 
-		d, _ := cmd.Flags().GetString("d")
+		canonicalFlag, _ := cmd.Flags().GetBool("canonical")
 
-		// Method: DomainsUpdate
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = id
-		_ = d
+		tLSCertFlag, _ := cmd.Flags().GetString("---a-c-r7---cert")
 
-		fmt.Println(render.RenderInfo("Command 'update' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.DomainsUpdate(...)"))
+		tLSKeyFlag, _ := cmd.Flags().GetString("---a-c-r7---key")
+
+		letsEncryptEnabledFlag, _ := cmd.Flags().GetBool("lets-encrypt-enabled")
+
+		d := scalingo.DomainsUpdateParams{
+			Canonical:          &canonicalFlag,
+			TLSCert:            &tLSCertFlag,
+			TLSKey:             &tLSKeyFlag,
+			LetsEncryptEnabled: &letsEncryptEnabledFlag,
+		}
+
+		result, err := client.DomainsUpdate(ctx, app, id, d)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -127,7 +203,13 @@ func initdomainsUpdateCmd() {
 
 	domainsUpdateCmd.Flags().String("id", "", "id parameter")
 
-	domainsUpdateCmd.Flags().String("d", "", "d (JSON format)")
+	domainsUpdateCmd.Flags().Bool("canonical", false, "Canonical field")
+
+	domainsUpdateCmd.Flags().String("---a-c-r7---cert", "", "TLSCert field")
+
+	domainsUpdateCmd.Flags().String("---a-c-r7---key", "", "TLSKey field")
+
+	domainsUpdateCmd.Flags().Bool("lets-encrypt-enabled", false, "LetsEncryptEnabled field")
 
 	domainsUpdateCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -138,9 +220,15 @@ var domainsRemoveCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
@@ -151,14 +239,12 @@ var domainsRemoveCmd = &cobra.Command{
 
 		id, _ := cmd.Flags().GetString("id")
 
-		// Method: DomainsRemove
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = id
+		if err := client.DomainsRemove(ctx, app, id); err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(render.RenderSuccess("remove completed successfully"))
 
-		fmt.Println(render.RenderInfo("Command 'remove' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.DomainsRemove(...)"))
 		return nil
 	},
 }
@@ -178,24 +264,40 @@ var domainsDomainSetCanonicalCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: DomainSetCanonical
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		id, _ := cmd.Flags().GetString("id")
 
-		fmt.Println(render.RenderInfo("Command 'domain-set-canonical' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.DomainSetCanonical(...)"))
+		result, err := client.DomainSetCanonical(ctx, app, id)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -203,6 +305,8 @@ var domainsDomainSetCanonicalCmd = &cobra.Command{
 func initdomainsDomainSetCanonicalCmd() {
 
 	domainsDomainSetCanonicalCmd.Flags().String("app", "", "app parameter")
+
+	domainsDomainSetCanonicalCmd.Flags().String("id", "", "id parameter")
 
 	domainsDomainSetCanonicalCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -213,24 +317,38 @@ var domainsDomainUnsetCanonicalCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: DomainUnsetCanonical
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		result, err := client.DomainUnsetCanonical(ctx, app)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'domain-unset-canonical' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.DomainUnsetCanonical(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -248,24 +366,44 @@ var domainsDomainSetCertificateCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: DomainSetCertificate
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		id, _ := cmd.Flags().GetString("id")
 
-		fmt.Println(render.RenderInfo("Command 'domain-set-certificate' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.DomainSetCertificate(...)"))
+		tlsCert, _ := cmd.Flags().GetString("tls-cert")
+
+		tlsKey, _ := cmd.Flags().GetString("tls-key")
+
+		result, err := client.DomainSetCertificate(ctx, app, id, tlsCert, tlsKey)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -273,6 +411,12 @@ var domainsDomainSetCertificateCmd = &cobra.Command{
 func initdomainsDomainSetCertificateCmd() {
 
 	domainsDomainSetCertificateCmd.Flags().String("app", "", "app parameter")
+
+	domainsDomainSetCertificateCmd.Flags().String("id", "", "id parameter")
+
+	domainsDomainSetCertificateCmd.Flags().String("tls-cert", "", "tlsCert parameter")
+
+	domainsDomainSetCertificateCmd.Flags().String("tls-key", "", "tlsKey parameter")
 
 	domainsDomainSetCertificateCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -283,24 +427,40 @@ var domainsDomainUnsetCertificateCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: DomainUnsetCertificate
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		id, _ := cmd.Flags().GetString("id")
 
-		fmt.Println(render.RenderInfo("Command 'domain-unset-certificate' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.DomainUnsetCertificate(...)"))
+		result, err := client.DomainUnsetCertificate(ctx, app, id)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -308,6 +468,8 @@ var domainsDomainUnsetCertificateCmd = &cobra.Command{
 func initdomainsDomainUnsetCertificateCmd() {
 
 	domainsDomainUnsetCertificateCmd.Flags().String("app", "", "app parameter")
+
+	domainsDomainUnsetCertificateCmd.Flags().String("id", "", "id parameter")
 
 	domainsDomainUnsetCertificateCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }

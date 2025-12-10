@@ -4,11 +4,11 @@ package commands
 import (
 	"context"
 	"fmt"
-	"os"
 
 	scalingo "github.com/Scalingo/go-scalingo/v8"
 	"github.com/spf13/cobra"
 
+	"generative-cli/config"
 	"generative-cli/render"
 )
 
@@ -18,24 +18,40 @@ var backupsBackupListCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: BackupList
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		addonID, _ := cmd.Flags().GetString("addon-i-d")
 
-		fmt.Println(render.RenderInfo("Command 'backup-list' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.BackupList(...)"))
+		result, err := client.BackupList(ctx, app, addonID)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -43,6 +59,8 @@ var backupsBackupListCmd = &cobra.Command{
 func initbackupsBackupListCmd() {
 
 	backupsBackupListCmd.Flags().String("app", "", "app parameter")
+
+	backupsBackupListCmd.Flags().String("addon-i-d", "", "addonID parameter")
 
 	backupsBackupListCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -53,24 +71,40 @@ var backupsBackupCreateCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: BackupCreate
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		addonID, _ := cmd.Flags().GetString("addon-i-d")
 
-		fmt.Println(render.RenderInfo("Command 'backup-create' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.BackupCreate(...)"))
+		result, err := client.BackupCreate(ctx, app, addonID)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -78,6 +112,8 @@ var backupsBackupCreateCmd = &cobra.Command{
 func initbackupsBackupCreateCmd() {
 
 	backupsBackupCreateCmd.Flags().String("app", "", "app parameter")
+
+	backupsBackupCreateCmd.Flags().String("addon-i-d", "", "addonID parameter")
 
 	backupsBackupCreateCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -88,24 +124,42 @@ var backupsBackupShowCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: BackupShow
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		addonID, _ := cmd.Flags().GetString("addon-i-d")
 
-		fmt.Println(render.RenderInfo("Command 'backup-show' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.BackupShow(...)"))
+		backupID, _ := cmd.Flags().GetString("backup-i-d")
+
+		result, err := client.BackupShow(ctx, app, addonID, backupID)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -113,6 +167,10 @@ var backupsBackupShowCmd = &cobra.Command{
 func initbackupsBackupShowCmd() {
 
 	backupsBackupShowCmd.Flags().String("app", "", "app parameter")
+
+	backupsBackupShowCmd.Flags().String("addon-i-d", "", "addonID parameter")
+
+	backupsBackupShowCmd.Flags().String("backup-i-d", "", "backupID parameter")
 
 	backupsBackupShowCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -123,24 +181,42 @@ var backupsBackupDownloadURLCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: BackupDownloadURL
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		addonID, _ := cmd.Flags().GetString("addon-i-d")
 
-		fmt.Println(render.RenderInfo("Command 'backup-download-u-r-l' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.BackupDownloadURL(...)"))
+		backupID, _ := cmd.Flags().GetString("backup-i-d")
+
+		result, err := client.BackupDownloadURL(ctx, app, addonID, backupID)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -148,6 +224,10 @@ var backupsBackupDownloadURLCmd = &cobra.Command{
 func initbackupsBackupDownloadURLCmd() {
 
 	backupsBackupDownloadURLCmd.Flags().String("app", "", "app parameter")
+
+	backupsBackupDownloadURLCmd.Flags().String("addon-i-d", "", "addonID parameter")
+
+	backupsBackupDownloadURLCmd.Flags().String("backup-i-d", "", "backupID parameter")
 
 	backupsBackupDownloadURLCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }

@@ -4,11 +4,11 @@ package commands
 import (
 	"context"
 	"fmt"
-	"os"
 
 	scalingo "github.com/Scalingo/go-scalingo/v8"
 	"github.com/spf13/cobra"
 
+	"generative-cli/config"
 	"generative-cli/render"
 )
 
@@ -18,30 +18,42 @@ var privateNetworksDomainsListCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		page, _ := cmd.Flags().GetString("page")
+		page, _ := cmd.Flags().GetUint("page")
 
-		perPage, _ := cmd.Flags().GetString("per-page")
+		perPage, _ := cmd.Flags().GetUint("per-page")
 
-		// Method: PrivateNetworksDomainsList
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = page
-		_ = perPage
+		result, err := client.PrivateNetworksDomainsList(ctx, app, page, perPage)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'domains-list' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.PrivateNetworksDomainsList(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -50,9 +62,9 @@ func initprivateNetworksDomainsListCmd() {
 
 	privateNetworksDomainsListCmd.Flags().String("app", "", "app parameter")
 
-	privateNetworksDomainsListCmd.Flags().String("page", "", "page (JSON format)")
+	privateNetworksDomainsListCmd.Flags().Uint("page", 0, "page parameter")
 
-	privateNetworksDomainsListCmd.Flags().String("per-page", "", "perPage (JSON format)")
+	privateNetworksDomainsListCmd.Flags().Uint("per-page", 0, "perPage parameter")
 
 	privateNetworksDomainsListCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }

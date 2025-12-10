@@ -18,21 +18,21 @@ version = 1
     service = "AddonsService"
     method = "AddonDestroy"
     use = "addon-destroy"
-    flags = ["app"]
+    flags = ["app", "addon-i-d"]
     returns = ""
     renderer = "success"
   [commands.addons-addon-logs-archives]
     service = "AddonsService"
     method = "AddonLogsArchives"
     use = "addon-logs-archives"
-    flags = ["app", "page"]
+    flags = ["app", "addon-i-d", "page"]
     returns = "*LogsArchivesResponse"
     renderer = "detail"
   [commands.addons-addon-logs-u-r-l]
     service = "AddonsService"
     method = "AddonLogsURL"
     use = "addon-logs-u-r-l"
-    flags = ["app"]
+    flags = ["app", "addon-i-d"]
     returns = "string"
     renderer = "success"
   [commands.addons-addon-provision]
@@ -46,14 +46,14 @@ version = 1
     service = "AddonsService"
     method = "AddonToken"
     use = "addon-token"
-    flags = ["app"]
+    flags = ["app", "addon-i-d"]
     returns = "string"
     renderer = "success"
   [commands.addons-addon-upgrade]
     service = "AddonsService"
     method = "AddonUpgrade"
     use = "addon-upgrade"
-    flags = ["app", "params"]
+    flags = ["app", "addon-i-d", "params"]
     returns = "AddonRes"
     renderer = "success"
   [commands.addons-list]
@@ -74,21 +74,21 @@ version = 1
     service = "AlertsService"
     method = "AlertRemove"
     use = "alert-remove"
-    flags = ["app"]
+    flags = ["app", "id"]
     returns = ""
     renderer = "success"
   [commands.alerts-alert-show]
     service = "AlertsService"
     method = "AlertShow"
     use = "alert-show"
-    flags = ["app"]
+    flags = ["app", "id"]
     returns = "*Alert"
     renderer = "detail"
   [commands.alerts-alert-update]
     service = "AlertsService"
     method = "AlertUpdate"
     use = "alert-update"
-    flags = ["app", "params"]
+    flags = ["app", "id", "params"]
     returns = "*Alert"
     renderer = "detail"
   [commands.alerts-list]
@@ -227,28 +227,28 @@ version = 1
     service = "BackupsService"
     method = "BackupCreate"
     use = "backup-create"
-    flags = ["app"]
+    flags = ["app", "addon-i-d"]
     returns = "*Backup"
     renderer = "detail"
   [commands.backups-backup-download-u-r-l]
     service = "BackupsService"
     method = "BackupDownloadURL"
     use = "backup-download-u-r-l"
-    flags = ["app"]
+    flags = ["app", "addon-i-d", "backup-i-d"]
     returns = "string"
     renderer = "success"
   [commands.backups-backup-list]
     service = "BackupsService"
     method = "BackupList"
     use = "backup-list"
-    flags = ["app"]
+    flags = ["app", "addon-i-d"]
     returns = "[]Backup"
     renderer = "table"
   [commands.backups-backup-show]
     service = "BackupsService"
     method = "BackupShow"
     use = "backup-show"
-    flags = ["app"]
+    flags = ["app", "addon-i-d", "backup-i-d"]
     returns = "*Backup"
     renderer = "detail"
   [commands.collaborators-collaborator-add]
@@ -262,14 +262,14 @@ version = 1
     service = "CollaboratorsService"
     method = "CollaboratorRemove"
     use = "collaborator-remove"
-    flags = ["app"]
+    flags = ["app", "collaborator-i-d"]
     returns = ""
     renderer = "success"
   [commands.collaborators-collaborator-update]
     service = "CollaboratorsService"
     method = "CollaboratorUpdate"
     use = "collaborator-update"
-    flags = ["app", "params"]
+    flags = ["app", "collaborator-i-d", "params"]
     returns = "Collaborator"
     renderer = "success"
   [commands.collaborators-list]
@@ -289,7 +289,7 @@ version = 1
     service = "ContainersService"
     method = "ContainersStop"
     use = "stop"
-    flags = ["app-name"]
+    flags = ["app-name", "container-i-d"]
     returns = ""
     renderer = "success"
   [commands.cron-tasks-get]
@@ -303,78 +303,51 @@ version = 1
     service = "DatabasesService"
     method = "DatabaseDisableFeature"
     use = "database-disable-feature"
-    flags = ["app"]
+    flags = ["app", "addon-i-d", "feature"]
     returns = "DatabaseDisableFeatureResponse"
     renderer = "success"
   [commands.databases-database-enable-feature]
     service = "DatabasesService"
     method = "DatabaseEnableFeature"
     use = "database-enable-feature"
-    flags = ["app"]
+    flags = ["app", "addon-i-d", "feature"]
     returns = "DatabaseEnableFeatureResponse"
     renderer = "success"
   [commands.databases-database-list-maintenance]
     service = "DatabasesService"
     method = "DatabaseListMaintenance"
     use = "database-list-maintenance"
-    flags = ["app", "opts"]
+    flags = ["app", "addon-i-d", "opts"]
     returns = "[]*Maintenance"
     renderer = "table"
   [commands.databases-database-show]
     service = "DatabasesService"
     method = "DatabaseShow"
     use = "database-show"
-    flags = ["app"]
+    flags = ["app", "addon-i-d"]
     returns = "Database"
     renderer = "success"
   [commands.databases-database-show-maintenance]
     service = "DatabasesService"
     method = "DatabaseShowMaintenance"
     use = "database-show-maintenance"
-    flags = ["app"]
+    flags = ["app", "addon-i-d", "maintenance-i-d"]
     returns = "Maintenance"
     renderer = "success"
   [commands.databases-database-update-maintenance-window]
     service = "DatabasesService"
     method = "DatabaseUpdateMaintenanceWindow"
     use = "database-update-maintenance-window"
-    flags = ["app", "params"]
+    flags = ["app", "addon-i-d", "params"]
     returns = "Database"
     renderer = "success"
   [commands.databases-database-update-periodic-backups-config]
     service = "DatabasesService"
     method = "DatabaseUpdatePeriodicBackupsConfig"
     use = "database-update-periodic-backups-config"
-    flags = ["app", "params"]
+    flags = ["app", "addon-i-d", "params"]
     returns = "Database"
     renderer = "success"
-  [commands.databases-preview-database-create]
-    service = "DatabasesPreviewService"
-    method = "DatabaseCreate"
-    use = "database-create"
-    flags = ["params"]
-    returns = "DatabaseNG"
-    renderer = "success"
-  [commands.databases-preview-database-destroy]
-    service = "DatabasesPreviewService"
-    method = "DatabaseDestroy"
-    use = "database-destroy"
-    flags = ["app-i-d"]
-    returns = ""
-    renderer = "success"
-  [commands.databases-preview-database-show]
-    service = "DatabasesPreviewService"
-    method = "DatabaseShow"
-    use = "database-show"
-    flags = ["app-i-d"]
-    returns = "DatabaseNG"
-    renderer = "success"
-  [commands.databases-preview-databases-list]
-    service = "DatabasesPreviewService"
-    method = "DatabasesList"
-    use = "databases-list"
-    returns = "[]DatabaseNG"
-    renderer = "table"
   [commands.deployments-create]
     service = "DeploymentsService"
     method = "DeploymentsCreate"
@@ -428,14 +401,14 @@ version = 1
     service = "DomainsService"
     method = "DomainSetCanonical"
     use = "domain-set-canonical"
-    flags = ["app"]
+    flags = ["app", "id"]
     returns = "Domain"
     renderer = "success"
   [commands.domains-domain-set-certificate]
     service = "DomainsService"
     method = "DomainSetCertificate"
     use = "domain-set-certificate"
-    flags = ["app"]
+    flags = ["app", "id", "tls-cert", "tls-key"]
     returns = "Domain"
     renderer = "success"
   [commands.domains-domain-unset-canonical]
@@ -449,7 +422,7 @@ version = 1
     service = "DomainsService"
     method = "DomainUnsetCertificate"
     use = "domain-unset-certificate"
-    flags = ["app"]
+    flags = ["app", "id"]
     returns = "Domain"
     renderer = "success"
   [commands.domains-list]
@@ -565,14 +538,14 @@ version = 1
     service = "LogDrainsService"
     method = "LogDrainAddonRemove"
     use = "log-drain-addon-remove"
-    flags = ["app", "u-r-l"]
+    flags = ["app", "addon-i-d", "u-r-l"]
     returns = ""
     renderer = "success"
   [commands.log-drains-log-drain-remove]
     service = "LogDrainsService"
     method = "LogDrainRemove"
     use = "log-drain-remove"
-    flags = ["app"]
+    flags = ["app", "u-r-l"]
     returns = ""
     renderer = "success"
   [commands.logs-]
@@ -627,14 +600,14 @@ version = 1
     service = "NotifiersService"
     method = "NotifierByID"
     use = "notifier-by-i-d"
-    flags = ["app"]
+    flags = ["app", "i-d"]
     returns = "*Notifier"
     renderer = "detail"
   [commands.notifiers-notifier-destroy]
     service = "NotifiersService"
     method = "NotifierDestroy"
     use = "notifier-destroy"
-    flags = ["app"]
+    flags = ["app", "i-d"]
     returns = ""
     renderer = "success"
   [commands.notifiers-notifier-provision]
@@ -648,14 +621,14 @@ version = 1
     service = "NotifiersService"
     method = "NotifierUpdate"
     use = "notifier-update"
-    flags = ["app", "params"]
+    flags = ["app", "i-d", "params"]
     returns = "*Notifier"
     renderer = "detail"
   [commands.operations-show]
     service = "OperationsService"
     method = "OperationsShow"
     use = "show"
-    flags = ["app"]
+    flags = ["app", "op-i-d"]
     returns = "*Operation"
     renderer = "detail"
   [commands.private-networks-domains-list]
@@ -785,14 +758,14 @@ version = 1
     service = "SCMRepoLinkService"
     method = "SCMRepoLinkManualDeploy"
     use = "manual-deploy"
-    flags = ["app"]
+    flags = ["app", "branch"]
     returns = "*Deployment"
     renderer = "detail"
   [commands.s-c-m-repo-link-manual-review-app]
     service = "SCMRepoLinkService"
     method = "SCMRepoLinkManualReviewApp"
     use = "manual-review-app"
-    flags = ["app"]
+    flags = ["app", "pull-request-i-d"]
     returns = ""
     renderer = "success"
   [commands.s-c-m-repo-link-pull-request]
@@ -827,7 +800,7 @@ version = 1
     service = "SignUpService"
     method = "SignUp"
     use = ""
-    flags = ["email"]
+    flags = ["email", "password"]
     returns = ""
     renderer = "success"
   [commands.sources-create]

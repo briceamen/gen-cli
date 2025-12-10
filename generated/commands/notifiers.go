@@ -4,11 +4,11 @@ package commands
 import (
 	"context"
 	"fmt"
-	"os"
 
 	scalingo "github.com/Scalingo/go-scalingo/v8"
 	"github.com/spf13/cobra"
 
+	"generative-cli/config"
 	"generative-cli/render"
 )
 
@@ -18,24 +18,38 @@ var notifiersListCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: NotifiersList
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		result, err := client.NotifiersList(ctx, app)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'list' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.NotifiersList(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -53,27 +67,71 @@ var notifiersNotifierProvisionCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		params, _ := cmd.Flags().GetString("params")
+		activeFlag, _ := cmd.Flags().GetBool("active")
 
-		// Method: NotifierProvision
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = params
+		nameFlag, _ := cmd.Flags().GetString("name")
 
-		fmt.Println(render.RenderInfo("Command 'notifier-provision' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.NotifierProvision(...)"))
+		sendAllEventsFlag, _ := cmd.Flags().GetBool("send-all-events")
+
+		sendAllAlertsFlag, _ := cmd.Flags().GetBool("send-all-alerts")
+
+		selectedEventIDsFlag, _ := cmd.Flags().GetStringSlice("selected-event---a-c-r0--s")
+
+		platformIDFlag, _ := cmd.Flags().GetString("platform---a-c-r0--")
+
+		phoneNumberFlag, _ := cmd.Flags().GetString("phone-number")
+
+		emailsFlag, _ := cmd.Flags().GetStringSlice("emails")
+
+		userIDsFlag, _ := cmd.Flags().GetStringSlice("user---a-c-r0--s")
+
+		webhookURLFlag, _ := cmd.Flags().GetString("webhook---a-c-r1--")
+
+		params := scalingo.NotifierParams{
+			Active:           &activeFlag,
+			Name:             nameFlag,
+			SendAllEvents:    &sendAllEventsFlag,
+			SendAllAlerts:    &sendAllAlertsFlag,
+			SelectedEventIDs: selectedEventIDsFlag,
+			PlatformID:       platformIDFlag,
+			PhoneNumber:      phoneNumberFlag,
+			Emails:           emailsFlag,
+			UserIDs:          userIDsFlag,
+			WebhookURL:       webhookURLFlag,
+		}
+
+		result, err := client.NotifierProvision(ctx, app, params)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -82,7 +140,25 @@ func initnotifiersNotifierProvisionCmd() {
 
 	notifiersNotifierProvisionCmd.Flags().String("app", "", "app parameter")
 
-	notifiersNotifierProvisionCmd.Flags().String("params", "", "params (JSON format)")
+	notifiersNotifierProvisionCmd.Flags().Bool("active", false, "Active field")
+
+	notifiersNotifierProvisionCmd.Flags().String("name", "", "Name field")
+
+	notifiersNotifierProvisionCmd.Flags().Bool("send-all-events", false, "SendAllEvents field")
+
+	notifiersNotifierProvisionCmd.Flags().Bool("send-all-alerts", false, "SendAllAlerts field")
+
+	notifiersNotifierProvisionCmd.Flags().StringSlice("selected-event---a-c-r0--s", nil, "SelectedEventIDs field")
+
+	notifiersNotifierProvisionCmd.Flags().String("platform---a-c-r0--", "", "PlatformID field")
+
+	notifiersNotifierProvisionCmd.Flags().String("phone-number", "", "PhoneNumber field")
+
+	notifiersNotifierProvisionCmd.Flags().StringSlice("emails", nil, "Emails field")
+
+	notifiersNotifierProvisionCmd.Flags().StringSlice("user---a-c-r0--s", nil, "UserIDs field")
+
+	notifiersNotifierProvisionCmd.Flags().String("webhook---a-c-r1--", "", "WebhookURL field")
 
 	notifiersNotifierProvisionCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -93,24 +169,40 @@ var notifiersNotifierByIDCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: NotifierByID
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		iD, _ := cmd.Flags().GetString("i-d")
 
-		fmt.Println(render.RenderInfo("Command 'notifier-by-i-d' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.NotifierByID(...)"))
+		result, err := client.NotifierByID(ctx, app, iD)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -118,6 +210,8 @@ var notifiersNotifierByIDCmd = &cobra.Command{
 func initnotifiersNotifierByIDCmd() {
 
 	notifiersNotifierByIDCmd.Flags().String("app", "", "app parameter")
+
+	notifiersNotifierByIDCmd.Flags().String("i-d", "", "ID parameter")
 
 	notifiersNotifierByIDCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -128,27 +222,73 @@ var notifiersNotifierUpdateCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		params, _ := cmd.Flags().GetString("params")
+		iD, _ := cmd.Flags().GetString("i-d")
 
-		// Method: NotifierUpdate
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = params
+		activeFlag, _ := cmd.Flags().GetBool("active")
 
-		fmt.Println(render.RenderInfo("Command 'notifier-update' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.NotifierUpdate(...)"))
+		nameFlag, _ := cmd.Flags().GetString("name")
+
+		sendAllEventsFlag, _ := cmd.Flags().GetBool("send-all-events")
+
+		sendAllAlertsFlag, _ := cmd.Flags().GetBool("send-all-alerts")
+
+		selectedEventIDsFlag, _ := cmd.Flags().GetStringSlice("selected-event---a-c-r0--s")
+
+		platformIDFlag, _ := cmd.Flags().GetString("platform---a-c-r0--")
+
+		phoneNumberFlag, _ := cmd.Flags().GetString("phone-number")
+
+		emailsFlag, _ := cmd.Flags().GetStringSlice("emails")
+
+		userIDsFlag, _ := cmd.Flags().GetStringSlice("user---a-c-r0--s")
+
+		webhookURLFlag, _ := cmd.Flags().GetString("webhook---a-c-r1--")
+
+		params := scalingo.NotifierParams{
+			Active:           &activeFlag,
+			Name:             nameFlag,
+			SendAllEvents:    &sendAllEventsFlag,
+			SendAllAlerts:    &sendAllAlertsFlag,
+			SelectedEventIDs: selectedEventIDsFlag,
+			PlatformID:       platformIDFlag,
+			PhoneNumber:      phoneNumberFlag,
+			Emails:           emailsFlag,
+			UserIDs:          userIDsFlag,
+			WebhookURL:       webhookURLFlag,
+		}
+
+		result, err := client.NotifierUpdate(ctx, app, iD, params)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -157,7 +297,27 @@ func initnotifiersNotifierUpdateCmd() {
 
 	notifiersNotifierUpdateCmd.Flags().String("app", "", "app parameter")
 
-	notifiersNotifierUpdateCmd.Flags().String("params", "", "params (JSON format)")
+	notifiersNotifierUpdateCmd.Flags().String("i-d", "", "ID parameter")
+
+	notifiersNotifierUpdateCmd.Flags().Bool("active", false, "Active field")
+
+	notifiersNotifierUpdateCmd.Flags().String("name", "", "Name field")
+
+	notifiersNotifierUpdateCmd.Flags().Bool("send-all-events", false, "SendAllEvents field")
+
+	notifiersNotifierUpdateCmd.Flags().Bool("send-all-alerts", false, "SendAllAlerts field")
+
+	notifiersNotifierUpdateCmd.Flags().StringSlice("selected-event---a-c-r0--s", nil, "SelectedEventIDs field")
+
+	notifiersNotifierUpdateCmd.Flags().String("platform---a-c-r0--", "", "PlatformID field")
+
+	notifiersNotifierUpdateCmd.Flags().String("phone-number", "", "PhoneNumber field")
+
+	notifiersNotifierUpdateCmd.Flags().StringSlice("emails", nil, "Emails field")
+
+	notifiersNotifierUpdateCmd.Flags().StringSlice("user---a-c-r0--s", nil, "UserIDs field")
+
+	notifiersNotifierUpdateCmd.Flags().String("webhook---a-c-r1--", "", "WebhookURL field")
 
 	notifiersNotifierUpdateCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -168,9 +328,15 @@ var notifiersNotifierDestroyCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
@@ -179,13 +345,14 @@ var notifiersNotifierDestroyCmd = &cobra.Command{
 
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: NotifierDestroy
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		iD, _ := cmd.Flags().GetString("i-d")
 
-		fmt.Println(render.RenderInfo("Command 'notifier-destroy' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.NotifierDestroy(...)"))
+		if err := client.NotifierDestroy(ctx, app, iD); err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(render.RenderSuccess("notifier-destroy completed successfully"))
+
 		return nil
 	},
 }
@@ -193,6 +360,8 @@ var notifiersNotifierDestroyCmd = &cobra.Command{
 func initnotifiersNotifierDestroyCmd() {
 
 	notifiersNotifierDestroyCmd.Flags().String("app", "", "app parameter")
+
+	notifiersNotifierDestroyCmd.Flags().String("i-d", "", "ID parameter")
 
 	notifiersNotifierDestroyCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }

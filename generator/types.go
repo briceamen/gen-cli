@@ -39,3 +39,22 @@ type ParsedStruct struct {
 	Name   string
 	Fields []StructField
 }
+
+// StructBuilder represents code to build an SDK struct from CLI flags
+type StructBuilder struct {
+	VarName   string               // Go variable name (e.g., "opts")
+	TypeName  string               // SDK type name (e.g., "AppsCreateOpts")
+	IsPointer bool                 // Whether the param expects a pointer
+	Fields    []StructFieldMapping // Fields to populate from CLI flags
+}
+
+// StructFieldMapping maps a CLI flag to a struct field
+type StructFieldMapping struct {
+	FieldName  string // Struct field name (e.g., "Name")
+	FlagVar    string // CLI flag variable name (e.g., "name")
+	FieldType  string // Go type for conversion (e.g., "string")
+	FlagName   string // CLI flag name in kebab-case (e.g., "name")
+	IsPointer  bool   // Whether the field type is a pointer
+	NeedsDeref bool   // Whether we need to take address of flag value
+	Skip       bool   // Whether to skip this field (complex types)
+}

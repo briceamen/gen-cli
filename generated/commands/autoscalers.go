@@ -4,11 +4,11 @@ package commands
 import (
 	"context"
 	"fmt"
-	"os"
 
 	scalingo "github.com/Scalingo/go-scalingo/v8"
 	"github.com/spf13/cobra"
 
+	"generative-cli/config"
 	"generative-cli/render"
 )
 
@@ -18,24 +18,38 @@ var autoscalersListCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		// Method: AutoscalersList
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
+		result, err := client.AutoscalersList(ctx, app)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
 
-		fmt.Println(render.RenderInfo("Command 'list' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AutoscalersList(...)"))
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -53,27 +67,56 @@ var autoscalersAutoscalerAddCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
+		outputFormat, _ := cmd.Flags().GetString("output")
+
 		app, _ := cmd.Flags().GetString("app")
 
-		params, _ := cmd.Flags().GetString("params")
+		containerTypeFlag, _ := cmd.Flags().GetString("container-type")
 
-		// Method: AutoscalerAdd
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = params
+		metricFlag, _ := cmd.Flags().GetString("metric")
 
-		fmt.Println(render.RenderInfo("Command 'autoscaler-add' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AutoscalerAdd(...)"))
+		targetFlag, _ := cmd.Flags().GetFloat64("target")
+
+		minContainersFlag, _ := cmd.Flags().GetInt("min-containers")
+
+		maxContainersFlag, _ := cmd.Flags().GetInt("max-containers")
+
+		params := scalingo.AutoscalerAddParams{
+			ContainerType: containerTypeFlag,
+			Metric:        metricFlag,
+			Target:        targetFlag,
+			MinContainers: minContainersFlag,
+			MaxContainers: maxContainersFlag,
+		}
+
+		result, err := client.AutoscalerAdd(ctx, app, params)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
@@ -82,7 +125,15 @@ func initautoscalersAutoscalerAddCmd() {
 
 	autoscalersAutoscalerAddCmd.Flags().String("app", "", "app parameter")
 
-	autoscalersAutoscalerAddCmd.Flags().String("params", "", "params (JSON format)")
+	autoscalersAutoscalerAddCmd.Flags().String("container-type", "", "ContainerType field")
+
+	autoscalersAutoscalerAddCmd.Flags().String("metric", "", "Metric field")
+
+	autoscalersAutoscalerAddCmd.Flags().Float64("target", 0, "Target field")
+
+	autoscalersAutoscalerAddCmd.Flags().Int("min-containers", 0, "MinContainers field")
+
+	autoscalersAutoscalerAddCmd.Flags().Int("max-containers", 0, "MaxContainers field")
 
 	autoscalersAutoscalerAddCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -93,9 +144,15 @@ var autoscalersAutoscalerRemoveCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
@@ -106,14 +163,12 @@ var autoscalersAutoscalerRemoveCmd = &cobra.Command{
 
 		id, _ := cmd.Flags().GetString("id")
 
-		// Method: AutoscalerRemove
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = app
-		_ = id
+		if err := client.AutoscalerRemove(ctx, app, id); err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(render.RenderSuccess("autoscaler-remove completed successfully"))
 
-		fmt.Println(render.RenderInfo("Command 'autoscaler-remove' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.AutoscalerRemove(...)"))
 		return nil
 	},
 }

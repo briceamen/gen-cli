@@ -51,6 +51,10 @@ sdk_version = ""
         name = "app"
         type = "string"
 
+      [[services.AddonsService.methods.params]]
+        name = "addonID"
+        type = "string"
+
     [[services.AddonsService.methods]]
       name = "AddonUpgrade"
       returns = "AddonRes"
@@ -58,6 +62,10 @@ sdk_version = ""
 
       [[services.AddonsService.methods.params]]
         name = "app"
+        type = "string"
+
+      [[services.AddonsService.methods.params]]
+        name = "addonID"
         type = "string"
 
       [[services.AddonsService.methods.params]]
@@ -73,6 +81,10 @@ sdk_version = ""
         name = "app"
         type = "string"
 
+      [[services.AddonsService.methods.params]]
+        name = "addonID"
+        type = "string"
+
     [[services.AddonsService.methods]]
       name = "AddonLogsURL"
       returns = "string"
@@ -82,6 +94,10 @@ sdk_version = ""
         name = "app"
         type = "string"
 
+      [[services.AddonsService.methods.params]]
+        name = "addonID"
+        type = "string"
+
     [[services.AddonsService.methods]]
       name = "AddonLogsArchives"
       returns = "*LogsArchivesResponse"
@@ -89,6 +105,10 @@ sdk_version = ""
 
       [[services.AddonsService.methods.params]]
         name = "app"
+        type = "string"
+
+      [[services.AddonsService.methods.params]]
+        name = "addonID"
         type = "string"
 
       [[services.AddonsService.methods.params]]
@@ -127,6 +147,10 @@ sdk_version = ""
         name = "app"
         type = "string"
 
+      [[services.AlertsService.methods.params]]
+        name = "id"
+        type = "string"
+
     [[services.AlertsService.methods]]
       name = "AlertUpdate"
       returns = "*Alert"
@@ -134,6 +158,10 @@ sdk_version = ""
 
       [[services.AlertsService.methods.params]]
         name = "app"
+        type = "string"
+
+      [[services.AlertsService.methods.params]]
+        name = "id"
         type = "string"
 
       [[services.AlertsService.methods.params]]
@@ -147,6 +175,10 @@ sdk_version = ""
 
       [[services.AlertsService.methods.params]]
         name = "app"
+        type = "string"
+
+      [[services.AlertsService.methods.params]]
+        name = "id"
         type = "string"
   [services.AppsService]
 
@@ -364,6 +396,10 @@ sdk_version = ""
         name = "app"
         type = "string"
 
+      [[services.BackupsService.methods.params]]
+        name = "addonID"
+        type = "string"
+
     [[services.BackupsService.methods]]
       name = "BackupCreate"
       returns = "*Backup"
@@ -371,6 +407,10 @@ sdk_version = ""
 
       [[services.BackupsService.methods.params]]
         name = "app"
+        type = "string"
+
+      [[services.BackupsService.methods.params]]
+        name = "addonID"
         type = "string"
 
     [[services.BackupsService.methods]]
@@ -382,6 +422,14 @@ sdk_version = ""
         name = "app"
         type = "string"
 
+      [[services.BackupsService.methods.params]]
+        name = "addonID"
+        type = "string"
+
+      [[services.BackupsService.methods.params]]
+        name = "backupID"
+        type = "string"
+
     [[services.BackupsService.methods]]
       name = "BackupDownloadURL"
       returns = "string"
@@ -389,6 +437,14 @@ sdk_version = ""
 
       [[services.BackupsService.methods.params]]
         name = "app"
+        type = "string"
+
+      [[services.BackupsService.methods.params]]
+        name = "addonID"
+        type = "string"
+
+      [[services.BackupsService.methods.params]]
+        name = "backupID"
         type = "string"
   [services.CollaboratorsService]
 
@@ -423,6 +479,10 @@ sdk_version = ""
         name = "app"
         type = "string"
 
+      [[services.CollaboratorsService.methods.params]]
+        name = "collaboratorID"
+        type = "string"
+
     [[services.CollaboratorsService.methods]]
       name = "CollaboratorUpdate"
       returns = "Collaborator"
@@ -430,6 +490,10 @@ sdk_version = ""
 
       [[services.CollaboratorsService.methods.params]]
         name = "app"
+        type = "string"
+
+      [[services.CollaboratorsService.methods.params]]
+        name = "collaboratorID"
         type = "string"
 
       [[services.CollaboratorsService.methods.params]]
@@ -452,6 +516,10 @@ sdk_version = ""
       [[services.ContainersService.methods.params]]
         name = "appName"
         type = "string"
+
+      [[services.ContainersService.methods.params]]
+        name = "containerID"
+        type = "string"
   [services.CronTasksService]
 
     [[services.CronTasksService.methods]]
@@ -461,40 +529,6 @@ sdk_version = ""
 
       [[services.CronTasksService.methods.params]]
         name = "app"
-        type = "string"
-  [services.DatabasesPreviewService]
-
-    [[services.DatabasesPreviewService.methods]]
-      name = "DatabaseCreate"
-      returns = "DatabaseNG"
-      generated = true
-
-      [[services.DatabasesPreviewService.methods.params]]
-        name = "params"
-        type = "DatabaseCreateParams"
-
-    [[services.DatabasesPreviewService.methods]]
-      name = "DatabasesList"
-      params = []
-      returns = "[]DatabaseNG"
-      generated = true
-
-    [[services.DatabasesPreviewService.methods]]
-      name = "DatabaseShow"
-      returns = "DatabaseNG"
-      generated = true
-
-      [[services.DatabasesPreviewService.methods.params]]
-        name = "appID"
-        type = "string"
-
-    [[services.DatabasesPreviewService.methods]]
-      name = "DatabaseDestroy"
-      returns = ""
-      generated = true
-
-      [[services.DatabasesPreviewService.methods.params]]
-        name = "appID"
         type = "string"
   [services.DatabasesService]
 
@@ -507,6 +541,10 @@ sdk_version = ""
         name = "app"
         type = "string"
 
+      [[services.DatabasesService.methods.params]]
+        name = "addonID"
+        type = "string"
+
     [[services.DatabasesService.methods]]
       name = "DatabaseEnableFeature"
       returns = "DatabaseEnableFeatureResponse"
@@ -514,6 +552,14 @@ sdk_version = ""
 
       [[services.DatabasesService.methods.params]]
         name = "app"
+        type = "string"
+
+      [[services.DatabasesService.methods.params]]
+        name = "addonID"
+        type = "string"
+
+      [[services.DatabasesService.methods.params]]
+        name = "feature"
         type = "string"
 
     [[services.DatabasesService.methods]]
@@ -525,6 +571,14 @@ sdk_version = ""
         name = "app"
         type = "string"
 
+      [[services.DatabasesService.methods.params]]
+        name = "addonID"
+        type = "string"
+
+      [[services.DatabasesService.methods.params]]
+        name = "feature"
+        type = "string"
+
     [[services.DatabasesService.methods]]
       name = "DatabaseUpdatePeriodicBackupsConfig"
       returns = "Database"
@@ -532,6 +586,10 @@ sdk_version = ""
 
       [[services.DatabasesService.methods.params]]
         name = "app"
+        type = "string"
+
+      [[services.DatabasesService.methods.params]]
+        name = "addonID"
         type = "string"
 
       [[services.DatabasesService.methods.params]]
@@ -548,6 +606,10 @@ sdk_version = ""
         type = "string"
 
       [[services.DatabasesService.methods.params]]
+        name = "addonID"
+        type = "string"
+
+      [[services.DatabasesService.methods.params]]
         name = "params"
         type = "MaintenanceWindowParams"
 
@@ -561,6 +623,10 @@ sdk_version = ""
         type = "string"
 
       [[services.DatabasesService.methods.params]]
+        name = "addonID"
+        type = "string"
+
+      [[services.DatabasesService.methods.params]]
         name = "opts"
         type = "PaginationOpts"
 
@@ -571,6 +637,14 @@ sdk_version = ""
 
       [[services.DatabasesService.methods.params]]
         name = "app"
+        type = "string"
+
+      [[services.DatabasesService.methods.params]]
+        name = "addonID"
+        type = "string"
+
+      [[services.DatabasesService.methods.params]]
+        name = "maintenanceID"
         type = "string"
   [services.DeploymentsService]
 
@@ -702,6 +776,10 @@ sdk_version = ""
         name = "app"
         type = "string"
 
+      [[services.DomainsService.methods.params]]
+        name = "id"
+        type = "string"
+
     [[services.DomainsService.methods]]
       name = "DomainUnsetCanonical"
       returns = "Domain"
@@ -720,6 +798,18 @@ sdk_version = ""
         name = "app"
         type = "string"
 
+      [[services.DomainsService.methods.params]]
+        name = "id"
+        type = "string"
+
+      [[services.DomainsService.methods.params]]
+        name = "tlsCert"
+        type = "string"
+
+      [[services.DomainsService.methods.params]]
+        name = "tlsKey"
+        type = "string"
+
     [[services.DomainsService.methods]]
       name = "DomainUnsetCertificate"
       returns = "Domain"
@@ -727,6 +817,10 @@ sdk_version = ""
 
       [[services.DomainsService.methods.params]]
         name = "app"
+        type = "string"
+
+      [[services.DomainsService.methods.params]]
+        name = "id"
         type = "string"
   [services.EventsService]
 
@@ -844,6 +938,10 @@ sdk_version = ""
         name = "app"
         type = "string"
 
+      [[services.LogDrainsService.methods.params]]
+        name = "URL"
+        type = "string"
+
     [[services.LogDrainsService.methods]]
       name = "LogDrainAddonRemove"
       returns = ""
@@ -851,6 +949,10 @@ sdk_version = ""
 
       [[services.LogDrainsService.methods.params]]
         name = "app"
+        type = "string"
+
+      [[services.LogDrainsService.methods.params]]
+        name = "addonID"
         type = "string"
 
       [[services.LogDrainsService.methods.params]]
@@ -989,6 +1091,10 @@ sdk_version = ""
         name = "app"
         type = "string"
 
+      [[services.NotifiersService.methods.params]]
+        name = "ID"
+        type = "string"
+
     [[services.NotifiersService.methods]]
       name = "NotifierUpdate"
       returns = "*Notifier"
@@ -996,6 +1102,10 @@ sdk_version = ""
 
       [[services.NotifiersService.methods.params]]
         name = "app"
+        type = "string"
+
+      [[services.NotifiersService.methods.params]]
+        name = "ID"
         type = "string"
 
       [[services.NotifiersService.methods.params]]
@@ -1010,6 +1120,10 @@ sdk_version = ""
       [[services.NotifiersService.methods.params]]
         name = "app"
         type = "string"
+
+      [[services.NotifiersService.methods.params]]
+        name = "ID"
+        type = "string"
   [services.OperationsService]
 
     [[services.OperationsService.methods]]
@@ -1019,6 +1133,10 @@ sdk_version = ""
 
       [[services.OperationsService.methods.params]]
         name = "app"
+        type = "string"
+
+      [[services.OperationsService.methods.params]]
+        name = "opID"
         type = "string"
   [services.PrivateNetworksService]
 
@@ -1239,6 +1357,10 @@ sdk_version = ""
         name = "app"
         type = "string"
 
+      [[services.SCMRepoLinkService.methods.params]]
+        name = "branch"
+        type = "string"
+
     [[services.SCMRepoLinkService.methods]]
       name = "SCMRepoLinkManualReviewApp"
       returns = ""
@@ -1246,6 +1368,10 @@ sdk_version = ""
 
       [[services.SCMRepoLinkService.methods.params]]
         name = "app"
+        type = "string"
+
+      [[services.SCMRepoLinkService.methods.params]]
+        name = "pullRequestID"
         type = "string"
 
     [[services.SCMRepoLinkService.methods]]
@@ -1274,6 +1400,10 @@ sdk_version = ""
 
       [[services.SignUpService.methods.params]]
         name = "email"
+        type = "string"
+
+      [[services.SignUpService.methods.params]]
+        name = "password"
         type = "string"
   [services.SourcesService]
 

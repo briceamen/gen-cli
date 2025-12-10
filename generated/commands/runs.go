@@ -4,11 +4,11 @@ package commands
 import (
 	"context"
 	"fmt"
-	"os"
 
 	scalingo "github.com/Scalingo/go-scalingo/v8"
 	"github.com/spf13/cobra"
 
+	"generative-cli/config"
 	"generative-cli/render"
 )
 
@@ -18,31 +18,69 @@ var runsRunCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		authToken, err := config.C.LoadAuth()
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
 		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: os.Getenv("SCALINGO_API_TOKEN"),
-			Region:   os.Getenv("SCALINGO_REGION"),
+			APIToken: authToken,
+			Region:   config.C.GetRegion(),
 		})
 		if err != nil {
 			fmt.Println(render.RenderError(err))
 			return err
 		}
 
-		opts, _ := cmd.Flags().GetString("opts")
+		outputFormat, _ := cmd.Flags().GetString("output")
 
-		// Method: Run
-		// This is a generated stub - implement the actual SDK call
-		_ = client
-		_ = opts
+		appFlag, _ := cmd.Flags().GetString("app")
 
-		fmt.Println(render.RenderInfo("Command 'run' is not yet fully implemented"))
-		fmt.Println(render.SubtitleStyle.Render("SDK method: client.Run(...)"))
+		commandFlag, _ := cmd.Flags().GetStringSlice("command")
+
+		sizeFlag, _ := cmd.Flags().GetString("size")
+
+		detachedFlag, _ := cmd.Flags().GetBool("detached")
+
+		hasUploadsFlag, _ := cmd.Flags().GetBool("has-uploads")
+
+		opts := scalingo.RunOpts{
+			App:        appFlag,
+			Command:    commandFlag,
+			Size:       sizeFlag,
+			Detached:   detachedFlag,
+			HasUploads: hasUploadsFlag,
+		}
+
+		result, err := client.Run(ctx, opts)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+
+		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		fmt.Println(output)
+
 		return nil
 	},
 }
 
 func initrunsRunCmd() {
 
-	runsRunCmd.Flags().String("opts", "", "opts (JSON format)")
+	runsRunCmd.Flags().String("app", "", "App field")
+
+	runsRunCmd.Flags().StringSlice("command", nil, "Command field")
+
+	runsRunCmd.Flags().String("size", "", "Size field")
+
+	runsRunCmd.Flags().Bool("detached", false, "Detached field")
+
+	runsRunCmd.Flags().Bool("has-uploads", false, "HasUploads field")
 
 	runsRunCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }

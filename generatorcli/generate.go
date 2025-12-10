@@ -8,10 +8,7 @@ import (
 	"generative-cli/generator"
 )
 
-var (
-	sdkPath    string
-	outputPath string
-)
+var outputPath string
 
 var generateCmd = &cobra.Command{
 	Use:   "generate",
@@ -23,8 +20,33 @@ var generateCmd = &cobra.Command{
 			return fmt.Errorf("failed to load manifest: %w", err)
 		}
 
-		methods := manifest.MethodsToGenerate()
-		if len(methods) == 0 {
+		// Resolve SDK path and parse for full method signatures (including all return types)
+		resolvedSDKPath, err := resolveSDKPath(sdkPath)
+		if err != nil {
+			return fmt.Errorf("failed to resolve SDK path: %w", err)
+		}
+
+		// Parse SDK to get full method signatures with all return types
+		services, structs, err := generator.ParseSDKWithStructs(resolvedSDKPath)
+		if err != nil {
+			return fmt.Errorf("failed to parse SDK: %w", err)
+		}
+
+		// Build a map of methods to generate based on manifest
+		methodsToGen := manifest.MethodsToGenerateSet()
+
+		// Filter parsed services to only include methods marked for generation
+		methods := make(map[string][]generator.Method)
+		for _, svc := range services {
+			for _, method := range svc.Methods {
+				key := svc.Name + "." + method.Name
+				if methodsToGen[key] {
+					methods[svc.Name] = append(methods[svc.Name], method)
+				}
+			}
+		}
+
+		if countMethods(methods) == 0 {
 			fmt.Println("No methods marked for generation in manifest")
 			return nil
 		}
@@ -32,7 +54,7 @@ var generateCmd = &cobra.Command{
 		fmt.Printf("Generating commands for %d methods across %d services\n", countMethods(methods), len(methods))
 
 		// Generate code
-		if err := generator.GenerateCommands(methods, outputPath); err != nil {
+		if err := generator.GenerateCommands(methods, structs, outputPath); err != nil {
 			return fmt.Errorf("failed to generate commands: %w", err)
 		}
 
