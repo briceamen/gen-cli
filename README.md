@@ -101,26 +101,44 @@ Tables automatically adapt to terminal width using `lipgloss/table`.
 
 ### Generate Commands
 
-```bash
-# Build the generator CLI (or use go run ./cmd/generator)
-go build -o generative-cli ./cmd/generator
+The project uses Go's standard `go generate` mechanism:
 
-# Update manifest with any new SDK methods (uses vendored go-scalingo/v8 by default)
-./generative-cli update-manifest
+```bash
+# Regenerate CLI from SDK (updates manifest + generates code)
+go generate ./...
+
+# Output:
+# Parsing SDK at: vendor/github.com/Scalingo/go-scalingo/v8
+# Found 35 services
+# Manifest already up to date
+# Generating commands for 134 methods across 35 services
+# Generation complete!
+```
+
+You can also run the generator commands manually:
+
+```bash
+# Update manifest with any new SDK methods
+go run ./cmd/generator update-manifest
 
 # Override SDK location if you want to scan a different checkout
-./generative-cli update-manifest --sdk-path=/path/to/go-scalingo
+go run ./cmd/generator update-manifest --sdk-path=/path/to/go-scalingo
 
-# Generate commands from manifest.toml (read-only)
-./generative-cli generate
+# Generate commands from manifest.toml
+go run ./cmd/generator generate
+```
 
-# Output (example):
-# Parsing SDK at vendor/github.com/Scalingo/go-scalingo/v8... # update-manifest
-# Found 35 services with 133 methods
-# Adding 5 new methods to manifest
-# Manifest updated!
-# Generating commands for 133 methods across 35 services # generate
-# Generation complete!
+### Update SDK and Regenerate
+
+When the upstream SDK is updated:
+
+```bash
+# Update vendored SDK
+go get github.com/Scalingo/go-scalingo/v8@latest
+go mod vendor
+
+# Regenerate (will add new methods to manifest)
+go generate ./...
 ```
 
 ### Customize manifest entries

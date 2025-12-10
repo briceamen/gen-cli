@@ -25,7 +25,7 @@ type CommandSpec struct {
 }
 
 // GenerateSpec generates a TOML spec file for the new methods
-func GenerateSpec(newMethods map[string][]Method, outputPath string) error {
+func GenerateSpec(newMethods map[string][]Method, outputPath string) (err error) {
 	spec := Spec{
 		Version:  1,
 		Commands: make(map[string]CommandSpec),
@@ -75,7 +75,11 @@ func GenerateSpec(newMethods map[string][]Method, outputPath string) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() {
+		if cerr := f.Close(); cerr != nil && err == nil {
+			err = cerr
+		}
+	}()
 
 	encoder := toml.NewEncoder(f)
 	return encoder.Encode(spec)

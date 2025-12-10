@@ -73,12 +73,16 @@ func LoadManifest(path string) (*Manifest, error) {
 }
 
 // Save writes the manifest to a TOML file
-func (m *Manifest) Save(path string) error {
+func (m *Manifest) Save(path string) (err error) {
 	f, err := os.Create(path)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() {
+		if cerr := f.Close(); cerr != nil && err == nil {
+			err = cerr
+		}
+	}()
 
 	encoder := toml.NewEncoder(f)
 	return encoder.Encode(m)
@@ -106,10 +110,7 @@ func (m *Manifest) AddServices(services []Service) {
 			if !m.HasMethod(svc.Name, method.Name) {
 				params := make([]ManifestParam, len(method.Params))
 				for i, p := range method.Params {
-					params[i] = ManifestParam{
-						Name: p.Name,
-						Type: p.Type,
-					}
+					params[i] = ManifestParam(p)
 				}
 				returns := ""
 				for _, r := range method.Returns {
