@@ -6,6 +6,7 @@ import (
 	"go/parser"
 	"go/token"
 	"os"
+	"sort"
 	"strings"
 )
 
@@ -85,6 +86,8 @@ func ParseSDKWithStructs(sdkPath string) ([]Service, map[string]ParsedStruct, er
 		return nil, nil, fmt.Errorf("failed to parse directory: %w", err)
 	}
 
+	logSDKPackages(pkgs)
+
 	var services []Service
 	structs := make(map[string]ParsedStruct)
 
@@ -119,6 +122,9 @@ func ParseSDKWithStructs(sdkPath string) ([]Service, map[string]ParsedStruct, er
 									continue
 								}
 								if ifaceType, ok := typeSpec.Type.(*ast.InterfaceType); ok {
+									methodCount := countInterfaceMethods(ifaceType)
+									fmt.Printf("Discovered service %s with %d methods\n", typeSpec.Name.Name, methodCount)
+
 									service := parseInterface(typeSpec.Name.Name, ifaceType)
 									services = append(services, service)
 								}
@@ -391,4 +397,133 @@ func GetStructs(sdkPath string) (map[string]ParsedStruct, error) {
 	}
 
 	return structs, nil
+}
+
+func logSDKPackages(pkgs map[string]*ast.Package) {
+	if len(pkgs) == 0 {
+		fmt.Println("No packages found in SDK directory")
+		return
+	}
+
+	names := make([]string, 0, len(pkgs))
+	for name := range pkgs {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+
+	fmt.Printf("Found %d package(s) in SDK:\n", len(names))
+	for _, name := range names {
+		fmt.Printf("  - %s (%d files)\n", name, len(pkgs[name].Files))
+	}
+}
+
+func countInterfaceMethods(iface *ast.InterfaceType) int {
+	if iface.Methods == nil {
+		return 0
+	}
+
+	count := 0
+	for _, method := range iface.Methods.List {
+		if len(method.Names) == 0 {
+			continue
+		}
+		count += len(method.Names)
+	}
+	return count
+}
+
+// DetectMethodChaining analyzes services to find parameters that can be auto-fetched
+// from other methods in the same service. This enables automatic chaining like:
+// logsURL param -> automatically call LogsURL(app) first
+func DetectMethodChaining(services []Service) []Service {
+	for i := range services {
+		services[i] = detectServiceChaining(services[i])
+	}
+	return services
+}
+
+// detectServiceChaining finds chainable parameters within a single service
+func detectServiceChaining(service Service) Service {
+	// Build a map of method names for quick lookup
+	methodsByName := make(map[string]*Method)
+	for i := range service.Methods {
+		methodsByName[service.Methods[i].Name] = &service.Methods[i]
+	}
+
+	// Track which methods should be hidden (used only for chaining)
+	hiddenMethods := make(map[string]bool)
+
+	// Check each method's parameters for chainable patterns
+	for i := range service.Methods {
+		method := &service.Methods[i]
+		for j := range method.Params {
+			param := &method.Params[j]
+
+			// Look for URL parameters that could be chained
+			chainedMethod := findChainableMethod(param, methodsByName, method.Name)
+			if chainedMethod != nil {
+				param.ChainedFrom = &ChainedParam{
+					MethodName:   chainedMethod.Name,
+					SourceParams: chainedMethod.Params,
+				}
+				hiddenMethods[chainedMethod.Name] = true
+				fmt.Printf("  -> Detected chaining: %s.%s param '%s' from method %s\n",
+					service.Name, method.Name, param.Name, chainedMethod.Name)
+			}
+		}
+	}
+
+	// Mark hidden methods
+	for i := range service.Methods {
+		if hiddenMethods[service.Methods[i].Name] {
+			service.Methods[i].Hidden = true
+		}
+	}
+
+	return service
+}
+
+// findChainableMethod looks for a method that can provide a parameter value
+// Pattern: param "logsURL" -> method "LogsURL" that returns a URL/response
+func findChainableMethod(param *Param, methods map[string]*Method, currentMethod string) *Method {
+	// Only chain string parameters that look like they need a URL or ID from another call
+	if param.Type != "string" {
+		return nil
+	}
+
+	// Pattern 1: param name ends with URL (e.g., logsURL -> LogsURL)
+	paramLower := strings.ToLower(param.Name)
+	if strings.HasSuffix(paramLower, "url") {
+		// Try to find a matching method
+		// logsURL -> LogsURL, LogsUrl, logsURL
+		for methodName, method := range methods {
+			if methodName == currentMethod {
+				continue // Don't chain to self
+			}
+
+			methodLower := strings.ToLower(methodName)
+			if methodLower == paramLower {
+				// Found a match! Check if it returns something usable
+				if isURLProvider(method) {
+					return method
+				}
+			}
+		}
+	}
+
+	return nil
+}
+
+// isURLProvider checks if a method returns a URL (string or *http.Response)
+func isURLProvider(method *Method) bool {
+	for _, ret := range method.Returns {
+		if ret.IsError {
+			continue
+		}
+		// Returns string (direct URL) or *http.Response (URL in response body)
+		if ret.Type == "string" || ret.Type == "*http.Response" {
+			return true
+		}
+	}
+	return false
 }
