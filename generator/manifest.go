@@ -110,7 +110,7 @@ func (m *Manifest) AddServices(services []Service) {
 			if !m.HasMethod(svc.Name, method.Name) {
 				params := make([]ManifestParam, len(method.Params))
 				for i, p := range method.Params {
-					params[i] = ManifestParam(p)
+					params[i] = ManifestParam{Name: p.Name, Type: p.Type}
 				}
 				returns := ""
 				for _, r := range method.Returns {
