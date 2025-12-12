@@ -12,3 +12,4 @@ scalingo-gen
 .DS_Store
 
 vendor/
+bin/*
