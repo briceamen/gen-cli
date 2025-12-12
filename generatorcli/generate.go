@@ -26,16 +26,25 @@ var generateCmd = &cobra.Command{
 			return fmt.Errorf("failed to resolve SDK path: %w", err)
 		}
 
+		fmt.Printf("Parsing SDK at: %s\n", resolvedSDKPath)
+
 		// Parse SDK to get full method signatures with all return types
 		services, structs, err := generator.ParseSDKWithStructs(resolvedSDKPath)
 		if err != nil {
 			return fmt.Errorf("failed to parse SDK: %w", err)
 		}
 
+		fmt.Printf("Parsed %d services and %d structs from SDK\n", len(services), len(structs))
+
+		// Detect method chaining patterns (e.g., logsURL param -> LogsURL method)
+		fmt.Println("Detecting method chaining patterns...")
+		services = generator.DetectMethodChaining(services)
+
 		// Build a map of methods to generate based on manifest
 		methodsToGen := manifest.MethodsToGenerateSet()
 
 		// Filter parsed services to only include methods marked for generation
+		// Also include hidden methods that are needed for chaining
 		methods := make(map[string][]generator.Method)
 		for _, svc := range services {
 			for _, method := range svc.Methods {
