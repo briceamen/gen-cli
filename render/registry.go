@@ -3,6 +3,7 @@ package render
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"reflect"
 	"strings"
@@ -31,9 +32,20 @@ func RenderResult(data any, format OutputFormat) (string, error) {
 
 	v := reflect.ValueOf(data)
 
-	// Handle pointer to http.Response
+	// Handle pointer to http.Response - read and return body content
 	if v.Type() == reflect.TypeOf(&http.Response{}) {
 		resp := data.(*http.Response)
+		if resp.Body != nil {
+			defer resp.Body.Close()
+			body, err := io.ReadAll(resp.Body)
+			if err != nil {
+				return "", fmt.Errorf("failed to read response body: %w", err)
+			}
+			if len(body) > 0 {
+				return string(body), nil
+			}
+		}
+		// Fallback to status if no body
 		return RenderHTTPStatus(resp.StatusCode), nil
 	}
 
