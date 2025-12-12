@@ -12,12 +12,24 @@ type Method struct {
 	Params     []Param
 	Returns    []Return
 	HasContext bool
+	// Hidden indicates this method should not generate a CLI command
+	// (typically because it's a helper method used by chaining)
+	Hidden bool
 }
 
 // Param represents a method parameter
 type Param struct {
 	Name string
 	Type string
+	// ChainedFrom indicates this param should be fetched by calling another method first
+	// e.g., logsURL param is chained from LogsURL method
+	ChainedFrom *ChainedParam
+}
+
+// ChainedParam describes how to fetch a parameter value from another method
+type ChainedParam struct {
+	MethodName   string  // Method to call to get this value (e.g., "LogsURL")
+	SourceParams []Param // Parameters needed by the chained method (e.g., "app")
 }
 
 // Return represents a method return type
