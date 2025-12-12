@@ -59,23 +59,54 @@ type AppsService interface {
 A TOML file tracks which SDK methods have been discovered and whether they should be generated. Parameters are stored with names so you can tweak flag names manually without being overwritten.
 
 ```toml
-version = "1"
-sdk_version = "v8"
+version = 1
+sdk_version = ""
 
-[services.AppsService]
-  [[services.AppsService.methods]]
-  name = "AppsList"
-  params = []
-  returns = "[]*App"
-  generated = true
+[services]
+  [services.AppsService]
 
-  [[services.AppsService.methods]]
-  name = "AppsShow"
-  params = [
-    { name = "app", type = "string" },
-  ]
-  returns = "*App"
-  generated = true
+    [[services.AppsService.methods]]
+      name = "AppsList"
+      params = []
+      returns = "[]*App"
+      generated = true
+
+    [[services.AppsService.methods]]
+      name = "AppsShow"
+      returns = "*App"
+      generated = true
+
+      [[services.AppsService.methods.params]]
+        name = "app"
+        type = "string"
+```
+
+#### Manifest Types
+
+The manifest uses the following Go structures:
+
+```go
+type Manifest struct {
+    Version    int                        `toml:"version"`
+    SDKVersion string                     `toml:"sdk_version"`
+    Services   map[string]ManifestService `toml:"services"`
+}
+
+type ManifestService struct {
+    Methods []ManifestMethod `toml:"methods"`
+}
+
+type ManifestMethod struct {
+    Name      string          `toml:"name"`
+    Params    []ManifestParam `toml:"params"`
+    Returns   string          `toml:"returns"`
+    Generated bool            `toml:"generated"`
+}
+
+type ManifestParam struct {
+    Name string `toml:"name,omitempty"`
+    Type string `toml:"type"`
+}
 ```
 
 ### 3. Code Generation (`generator/codegen.go`)
