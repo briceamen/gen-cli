@@ -130,20 +130,30 @@ Tables automatically adapt to terminal width using `lipgloss/table`.
 
 ## Usage
 
-### Generate Commands
+### Makefile Targets
 
-The project uses Go's standard `go generate` mechanism:
+The project includes a Makefile for common operations:
+
+```bash
+make build      # Build both generator and runtime CLIs to bin/
+make generator  # Build only the generator CLI
+make runtime    # Build only the runtime CLI
+make generate   # Regenerate commands from manifest
+make rebuild    # Clean + generate + build runtime
+make lint       # Run golangci-lint
+make fmt        # Format code with gofmt
+make test       # Run tests
+make clean      # Remove build artifacts
+```
+
+### Generate Commands
 
 ```bash
 # Regenerate CLI from SDK (updates manifest + generates code)
-go generate ./...
+make generate
 
-# Output:
-# Parsing SDK at: vendor/github.com/Scalingo/go-scalingo/v8
-# Found 35 services
-# Manifest already up to date
-# Generating commands for 134 methods across 35 services
-# Generation complete!
+# Or using go generate directly
+go generate ./...
 ```
 
 You can also run the generator commands manually:
@@ -182,20 +192,20 @@ go generate ./...
 ### Use Generated Commands
 
 ```bash
-# Build the generated CLI (or use go run ./cmd/runtime)
-go build -o scalingo-gen ./cmd/runtime
+# Build the generated CLI
+make runtime
 
 # List apps
-./scalingo-gen apps list
+./bin/scalingo-gen apps list
 
 # Show app details
-./scalingo-gen apps show --app-name my-app
+./bin/scalingo-gen apps show --app-name my-app
 
 # List regions
-./scalingo-gen regions list
+./bin/scalingo-gen regions list
 
 # JSON output
-./scalingo-gen apps list --output json
+./bin/scalingo-gen apps list --output json
 ```
 
 ## Authentication
