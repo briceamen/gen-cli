@@ -58,7 +58,7 @@ var operationsShowCmd = &cobra.Command{
 
 func initoperationsShowCmd() {
 
-	operationsShowCmd.Flags().String("app", "", "app parameter")
+	operationsShowCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	operationsShowCmd.Flags().String("op-i-d", "", "opID parameter")
 

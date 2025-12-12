@@ -56,7 +56,7 @@ var cronTasksGetCmd = &cobra.Command{
 
 func initcronTasksGetCmd() {
 
-	cronTasksGetCmd.Flags().String("app", "", "app parameter")
+	cronTasksGetCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	cronTasksGetCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }

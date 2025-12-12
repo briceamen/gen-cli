@@ -111,7 +111,7 @@ var sCMRepoLinkShowCmd = &cobra.Command{
 
 func initsCMRepoLinkShowCmd() {
 
-	sCMRepoLinkShowCmd.Flags().String("app", "", "app parameter")
+	sCMRepoLinkShowCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	sCMRepoLinkShowCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -193,7 +193,7 @@ var sCMRepoLinkCreateCmd = &cobra.Command{
 
 func initsCMRepoLinkCreateCmd() {
 
-	sCMRepoLinkCreateCmd.Flags().String("app", "", "app parameter")
+	sCMRepoLinkCreateCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	sCMRepoLinkCreateCmd.Flags().String("source", "", "Source field")
 
@@ -289,7 +289,7 @@ var sCMRepoLinkUpdateCmd = &cobra.Command{
 
 func initsCMRepoLinkUpdateCmd() {
 
-	sCMRepoLinkUpdateCmd.Flags().String("app", "", "app parameter")
+	sCMRepoLinkUpdateCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	sCMRepoLinkUpdateCmd.Flags().String("branch", "", "Branch field")
 
@@ -345,7 +345,7 @@ var sCMRepoLinkDeleteCmd = &cobra.Command{
 
 func initsCMRepoLinkDeleteCmd() {
 
-	sCMRepoLinkDeleteCmd.Flags().String("app", "", "app parameter")
+	sCMRepoLinkDeleteCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	sCMRepoLinkDeleteCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -396,7 +396,7 @@ var sCMRepoLinkPullRequestCmd = &cobra.Command{
 
 func initsCMRepoLinkPullRequestCmd() {
 
-	sCMRepoLinkPullRequestCmd.Flags().String("app", "", "app parameter")
+	sCMRepoLinkPullRequestCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	sCMRepoLinkPullRequestCmd.Flags().Int("number", 0, "number parameter")
 
@@ -449,7 +449,7 @@ var sCMRepoLinkManualDeployCmd = &cobra.Command{
 
 func initsCMRepoLinkManualDeployCmd() {
 
-	sCMRepoLinkManualDeployCmd.Flags().String("app", "", "app parameter")
+	sCMRepoLinkManualDeployCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	sCMRepoLinkManualDeployCmd.Flags().String("branch", "", "branch parameter")
 
@@ -493,7 +493,7 @@ var sCMRepoLinkManualReviewAppCmd = &cobra.Command{
 
 func initsCMRepoLinkManualReviewAppCmd() {
 
-	sCMRepoLinkManualReviewAppCmd.Flags().String("app", "", "app parameter")
+	sCMRepoLinkManualReviewAppCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	sCMRepoLinkManualReviewAppCmd.Flags().String("pull-request-i-d", "", "pullRequestID parameter")
 
@@ -544,7 +544,7 @@ var sCMRepoLinkDeploymentsCmd = &cobra.Command{
 
 func initsCMRepoLinkDeploymentsCmd() {
 
-	sCMRepoLinkDeploymentsCmd.Flags().String("app", "", "app parameter")
+	sCMRepoLinkDeploymentsCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	sCMRepoLinkDeploymentsCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -593,7 +593,7 @@ var sCMRepoLinkReviewAppsCmd = &cobra.Command{
 
 func initsCMRepoLinkReviewAppsCmd() {
 
-	sCMRepoLinkReviewAppsCmd.Flags().String("app", "", "app parameter")
+	sCMRepoLinkReviewAppsCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	sCMRepoLinkReviewAppsCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }

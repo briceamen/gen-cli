@@ -58,7 +58,7 @@ var databasesDatabaseShowCmd = &cobra.Command{
 
 func initdatabasesDatabaseShowCmd() {
 
-	databasesDatabaseShowCmd.Flags().String("app", "", "app parameter")
+	databasesDatabaseShowCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	databasesDatabaseShowCmd.Flags().String("addon-i-d", "", "addonID parameter")
 
@@ -113,7 +113,7 @@ var databasesDatabaseEnableFeatureCmd = &cobra.Command{
 
 func initdatabasesDatabaseEnableFeatureCmd() {
 
-	databasesDatabaseEnableFeatureCmd.Flags().String("app", "", "app parameter")
+	databasesDatabaseEnableFeatureCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	databasesDatabaseEnableFeatureCmd.Flags().String("addon-i-d", "", "addonID parameter")
 
@@ -170,7 +170,7 @@ var databasesDatabaseDisableFeatureCmd = &cobra.Command{
 
 func initdatabasesDatabaseDisableFeatureCmd() {
 
-	databasesDatabaseDisableFeatureCmd.Flags().String("app", "", "app parameter")
+	databasesDatabaseDisableFeatureCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	databasesDatabaseDisableFeatureCmd.Flags().String("addon-i-d", "", "addonID parameter")
 
@@ -234,7 +234,7 @@ var databasesDatabaseUpdatePeriodicBackupsConfigCmd = &cobra.Command{
 
 func initdatabasesDatabaseUpdatePeriodicBackupsConfigCmd() {
 
-	databasesDatabaseUpdatePeriodicBackupsConfigCmd.Flags().String("app", "", "app parameter")
+	databasesDatabaseUpdatePeriodicBackupsConfigCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	databasesDatabaseUpdatePeriodicBackupsConfigCmd.Flags().String("addon-i-d", "", "addonID parameter")
 
@@ -300,7 +300,7 @@ var databasesDatabaseUpdateMaintenanceWindowCmd = &cobra.Command{
 
 func initdatabasesDatabaseUpdateMaintenanceWindowCmd() {
 
-	databasesDatabaseUpdateMaintenanceWindowCmd.Flags().String("app", "", "app parameter")
+	databasesDatabaseUpdateMaintenanceWindowCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	databasesDatabaseUpdateMaintenanceWindowCmd.Flags().String("addon-i-d", "", "addonID parameter")
 
@@ -367,7 +367,7 @@ var databasesDatabaseListMaintenanceCmd = &cobra.Command{
 
 func initdatabasesDatabaseListMaintenanceCmd() {
 
-	databasesDatabaseListMaintenanceCmd.Flags().String("app", "", "app parameter")
+	databasesDatabaseListMaintenanceCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	databasesDatabaseListMaintenanceCmd.Flags().String("addon-i-d", "", "addonID parameter")
 
@@ -422,7 +422,7 @@ var databasesDatabaseShowMaintenanceCmd = &cobra.Command{
 
 func initdatabasesDatabaseShowMaintenanceCmd() {
 
-	databasesDatabaseShowMaintenanceCmd.Flags().String("app", "", "app parameter")
+	databasesDatabaseShowMaintenanceCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	databasesDatabaseShowMaintenanceCmd.Flags().String("addon-i-d", "", "addonID parameter")
 

@@ -60,7 +60,7 @@ var privateNetworksDomainsListCmd = &cobra.Command{
 
 func initprivateNetworksDomainsListCmd() {
 
-	privateNetworksDomainsListCmd.Flags().String("app", "", "app parameter")
+	privateNetworksDomainsListCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	privateNetworksDomainsListCmd.Flags().Uint("page", 0, "page parameter")
 

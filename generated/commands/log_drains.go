@@ -56,7 +56,7 @@ var logDrainsListCmd = &cobra.Command{
 
 func initlogDrainsListCmd() {
 
-	logDrainsListCmd.Flags().String("app", "", "app parameter")
+	logDrainsListCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	logDrainsListCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -126,7 +126,7 @@ var logDrainsLogDrainAddCmd = &cobra.Command{
 
 func initlogDrainsLogDrainAddCmd() {
 
-	logDrainsLogDrainAddCmd.Flags().String("app", "", "app parameter")
+	logDrainsLogDrainAddCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	logDrainsLogDrainAddCmd.Flags().String("type", "", "Type field")
 
@@ -180,7 +180,7 @@ var logDrainsLogDrainRemoveCmd = &cobra.Command{
 
 func initlogDrainsLogDrainRemoveCmd() {
 
-	logDrainsLogDrainRemoveCmd.Flags().String("app", "", "app parameter")
+	logDrainsLogDrainRemoveCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	logDrainsLogDrainRemoveCmd.Flags().String("u-r-l", "", "URL parameter")
 
@@ -226,7 +226,7 @@ var logDrainsLogDrainAddonRemoveCmd = &cobra.Command{
 
 func initlogDrainsLogDrainAddonRemoveCmd() {
 
-	logDrainsLogDrainAddonRemoveCmd.Flags().String("app", "", "app parameter")
+	logDrainsLogDrainAddonRemoveCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	logDrainsLogDrainAddonRemoveCmd.Flags().String("addon-i-d", "", "addonID parameter")
 
@@ -281,7 +281,7 @@ var logDrainsAddonListCmd = &cobra.Command{
 
 func initlogDrainsAddonListCmd() {
 
-	logDrainsAddonListCmd.Flags().String("app", "", "app parameter")
+	logDrainsAddonListCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	logDrainsAddonListCmd.Flags().String("addon-i-d", "", "addonID parameter")
 
@@ -355,7 +355,7 @@ var logDrainsLogDrainAddonAddCmd = &cobra.Command{
 
 func initlogDrainsLogDrainAddonAddCmd() {
 
-	logDrainsLogDrainAddonAddCmd.Flags().String("app", "", "app parameter")
+	logDrainsLogDrainAddonAddCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	logDrainsLogDrainAddonAddCmd.Flags().String("addon-i-d", "", "addonID parameter")
 

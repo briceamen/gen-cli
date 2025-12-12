@@ -156,7 +156,7 @@ var eventsListCmd = &cobra.Command{
 
 func initeventsListCmd() {
 
-	eventsListCmd.Flags().String("app", "", "app parameter")
+	eventsListCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	eventsListCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }

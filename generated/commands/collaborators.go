@@ -56,7 +56,7 @@ var collaboratorsListCmd = &cobra.Command{
 
 func initcollaboratorsListCmd() {
 
-	collaboratorsListCmd.Flags().String("app", "", "app parameter")
+	collaboratorsListCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	collaboratorsListCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -114,7 +114,7 @@ var collaboratorsCollaboratorAddCmd = &cobra.Command{
 
 func initcollaboratorsCollaboratorAddCmd() {
 
-	collaboratorsCollaboratorAddCmd.Flags().String("app", "", "app parameter")
+	collaboratorsCollaboratorAddCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	collaboratorsCollaboratorAddCmd.Flags().String("email", "", "Email field")
 
@@ -160,7 +160,7 @@ var collaboratorsCollaboratorRemoveCmd = &cobra.Command{
 
 func initcollaboratorsCollaboratorRemoveCmd() {
 
-	collaboratorsCollaboratorRemoveCmd.Flags().String("app", "", "app parameter")
+	collaboratorsCollaboratorRemoveCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	collaboratorsCollaboratorRemoveCmd.Flags().String("collaborator-i-d", "", "collaboratorID parameter")
 
@@ -219,7 +219,7 @@ var collaboratorsCollaboratorUpdateCmd = &cobra.Command{
 
 func initcollaboratorsCollaboratorUpdateCmd() {
 
-	collaboratorsCollaboratorUpdateCmd.Flags().String("app", "", "app parameter")
+	collaboratorsCollaboratorUpdateCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	collaboratorsCollaboratorUpdateCmd.Flags().String("collaborator-i-d", "", "collaboratorID parameter")
 

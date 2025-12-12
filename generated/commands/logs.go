@@ -3,7 +3,9 @@ package commands
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
 
 	scalingo "github.com/Scalingo/go-scalingo/v8"
 	"github.com/spf13/cobra"
@@ -11,55 +13,6 @@ import (
 	"generative-cli/config"
 	"generative-cli/render"
 )
-
-var logsURLCmd = &cobra.Command{
-	Use:   "u-r-l",
-	Short: "Logs u-r-l",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		ctx := context.Background()
-
-		authToken, err := config.C.LoadAuth()
-		if err != nil {
-			fmt.Println(render.RenderError(err))
-			return err
-		}
-
-		client, err := scalingo.New(ctx, scalingo.ClientConfig{
-			APIToken: authToken,
-			Region:   config.C.GetRegion(),
-		})
-		if err != nil {
-			fmt.Println(render.RenderError(err))
-			return err
-		}
-
-		outputFormat, _ := cmd.Flags().GetString("output")
-
-		app, _ := cmd.Flags().GetString("app")
-
-		result, err := client.LogsURL(ctx, app)
-		if err != nil {
-			fmt.Println(render.RenderError(err))
-			return err
-		}
-
-		output, err := render.RenderResult(result, render.OutputFormat(outputFormat))
-		if err != nil {
-			fmt.Println(render.RenderError(err))
-			return err
-		}
-		fmt.Println(output)
-
-		return nil
-	},
-}
-
-func initlogsURLCmd() {
-
-	logsURLCmd.Flags().String("app", "", "app parameter")
-
-	logsURLCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
-}
 
 var logsRunCmd = &cobra.Command{
 	Use:   "run",
@@ -84,11 +37,33 @@ var logsRunCmd = &cobra.Command{
 
 		outputFormat, _ := cmd.Flags().GetString("output")
 
-		logsURL, _ := cmd.Flags().GetString("logs-u-r-l")
+		app, _ := cmd.Flags().GetString("app")
 
 		n, _ := cmd.Flags().GetInt("n")
 
 		filter, _ := cmd.Flags().GetString("filter")
+
+		// Fetch logsURL by calling LogsURL
+		logsURLResp, err := client.LogsURL(ctx, app)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		defer logsURLResp.Body.Close()
+		logsURLBytes, err := io.ReadAll(logsURLResp.Body)
+		if err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		// Parse JSON response to extract the URL
+		var logsURLData struct {
+			LogsURL string `json:"logs_url"`
+		}
+		if err := json.Unmarshal(logsURLBytes, &logsURLData); err != nil {
+			fmt.Println(render.RenderError(err))
+			return err
+		}
+		logsURL := logsURLData.LogsURL
 
 		result, err := client.Logs(ctx, logsURL, n, filter)
 		if err != nil {
@@ -109,11 +84,11 @@ var logsRunCmd = &cobra.Command{
 
 func initlogsRunCmd() {
 
-	logsRunCmd.Flags().String("logs-u-r-l", "", "logsURL parameter")
+	logsRunCmd.Flags().StringP("app", "a", "", "app parameter")
 
-	logsRunCmd.Flags().Int("n", 0, "n parameter")
+	logsRunCmd.Flags().IntP("n", "n", 0, "n parameter")
 
-	logsRunCmd.Flags().String("filter", "", "filter parameter")
+	logsRunCmd.Flags().StringP("filter", "F", "", "filter parameter")
 
 	logsRunCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -124,9 +99,6 @@ func RegisterLogsServiceCommands(parent *cobra.Command) {
 		Use:   "logs",
 		Short: "LogsService operations",
 	}
-
-	initlogsURLCmd()
-	serviceCmd.AddCommand(logsURLCmd)
 
 	initlogsRunCmd()
 	serviceCmd.AddCommand(logsRunCmd)

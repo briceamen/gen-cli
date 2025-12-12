@@ -56,7 +56,7 @@ var domainsListCmd = &cobra.Command{
 
 func initdomainsListCmd() {
 
-	domainsListCmd.Flags().String("app", "", "app parameter")
+	domainsListCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	domainsListCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -123,7 +123,7 @@ var domainsAddCmd = &cobra.Command{
 
 func initdomainsAddCmd() {
 
-	domainsAddCmd.Flags().String("app", "", "app parameter")
+	domainsAddCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	domainsAddCmd.Flags().String("name", "", "Name field")
 
@@ -199,9 +199,9 @@ var domainsUpdateCmd = &cobra.Command{
 
 func initdomainsUpdateCmd() {
 
-	domainsUpdateCmd.Flags().String("app", "", "app parameter")
+	domainsUpdateCmd.Flags().StringP("app", "a", "", "app parameter")
 
-	domainsUpdateCmd.Flags().String("id", "", "id parameter")
+	domainsUpdateCmd.Flags().StringP("id", "i", "", "id parameter")
 
 	domainsUpdateCmd.Flags().Bool("canonical", false, "Canonical field")
 
@@ -251,9 +251,9 @@ var domainsRemoveCmd = &cobra.Command{
 
 func initdomainsRemoveCmd() {
 
-	domainsRemoveCmd.Flags().String("app", "", "app parameter")
+	domainsRemoveCmd.Flags().StringP("app", "a", "", "app parameter")
 
-	domainsRemoveCmd.Flags().String("id", "", "id parameter")
+	domainsRemoveCmd.Flags().StringP("id", "i", "", "id parameter")
 
 	domainsRemoveCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -304,9 +304,9 @@ var domainsDomainSetCanonicalCmd = &cobra.Command{
 
 func initdomainsDomainSetCanonicalCmd() {
 
-	domainsDomainSetCanonicalCmd.Flags().String("app", "", "app parameter")
+	domainsDomainSetCanonicalCmd.Flags().StringP("app", "a", "", "app parameter")
 
-	domainsDomainSetCanonicalCmd.Flags().String("id", "", "id parameter")
+	domainsDomainSetCanonicalCmd.Flags().StringP("id", "i", "", "id parameter")
 
 	domainsDomainSetCanonicalCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -355,7 +355,7 @@ var domainsDomainUnsetCanonicalCmd = &cobra.Command{
 
 func initdomainsDomainUnsetCanonicalCmd() {
 
-	domainsDomainUnsetCanonicalCmd.Flags().String("app", "", "app parameter")
+	domainsDomainUnsetCanonicalCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	domainsDomainUnsetCanonicalCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -410,9 +410,9 @@ var domainsDomainSetCertificateCmd = &cobra.Command{
 
 func initdomainsDomainSetCertificateCmd() {
 
-	domainsDomainSetCertificateCmd.Flags().String("app", "", "app parameter")
+	domainsDomainSetCertificateCmd.Flags().StringP("app", "a", "", "app parameter")
 
-	domainsDomainSetCertificateCmd.Flags().String("id", "", "id parameter")
+	domainsDomainSetCertificateCmd.Flags().StringP("id", "i", "", "id parameter")
 
 	domainsDomainSetCertificateCmd.Flags().String("tls-cert", "", "tlsCert parameter")
 
@@ -467,9 +467,9 @@ var domainsDomainUnsetCertificateCmd = &cobra.Command{
 
 func initdomainsDomainUnsetCertificateCmd() {
 
-	domainsDomainUnsetCertificateCmd.Flags().String("app", "", "app parameter")
+	domainsDomainUnsetCertificateCmd.Flags().StringP("app", "a", "", "app parameter")
 
-	domainsDomainUnsetCertificateCmd.Flags().String("id", "", "id parameter")
+	domainsDomainUnsetCertificateCmd.Flags().StringP("id", "i", "", "id parameter")
 
 	domainsDomainUnsetCertificateCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }

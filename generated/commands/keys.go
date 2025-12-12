@@ -103,7 +103,7 @@ var keysAddCmd = &cobra.Command{
 
 func initkeysAddCmd() {
 
-	keysAddCmd.Flags().String("name", "", "name parameter")
+	keysAddCmd.Flags().StringP("name", "n", "", "name parameter")
 
 	keysAddCmd.Flags().String("content", "", "content parameter")
 
@@ -145,7 +145,7 @@ var keysDeleteCmd = &cobra.Command{
 
 func initkeysDeleteCmd() {
 
-	keysDeleteCmd.Flags().String("id", "", "id parameter")
+	keysDeleteCmd.Flags().StringP("id", "i", "", "id parameter")
 
 	keysDeleteCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }

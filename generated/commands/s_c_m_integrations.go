@@ -101,7 +101,7 @@ var sCMIntegrationsShowCmd = &cobra.Command{
 
 func initsCMIntegrationsShowCmd() {
 
-	sCMIntegrationsShowCmd.Flags().String("id", "", "id parameter")
+	sCMIntegrationsShowCmd.Flags().StringP("id", "i", "", "id parameter")
 
 	sCMIntegrationsShowCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -199,7 +199,7 @@ var sCMIntegrationsDeleteCmd = &cobra.Command{
 
 func initsCMIntegrationsDeleteCmd() {
 
-	sCMIntegrationsDeleteCmd.Flags().String("id", "", "id parameter")
+	sCMIntegrationsDeleteCmd.Flags().StringP("id", "i", "", "id parameter")
 
 	sCMIntegrationsDeleteCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -248,7 +248,7 @@ var sCMIntegrationsImportKeysCmd = &cobra.Command{
 
 func initsCMIntegrationsImportKeysCmd() {
 
-	sCMIntegrationsImportKeysCmd.Flags().String("id", "", "id parameter")
+	sCMIntegrationsImportKeysCmd.Flags().StringP("id", "i", "", "id parameter")
 
 	sCMIntegrationsImportKeysCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }

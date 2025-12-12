@@ -56,7 +56,7 @@ var autoscalersListCmd = &cobra.Command{
 
 func initautoscalersListCmd() {
 
-	autoscalersListCmd.Flags().String("app", "", "app parameter")
+	autoscalersListCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	autoscalersListCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -123,7 +123,7 @@ var autoscalersAutoscalerAddCmd = &cobra.Command{
 
 func initautoscalersAutoscalerAddCmd() {
 
-	autoscalersAutoscalerAddCmd.Flags().String("app", "", "app parameter")
+	autoscalersAutoscalerAddCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	autoscalersAutoscalerAddCmd.Flags().String("container-type", "", "ContainerType field")
 
@@ -175,9 +175,9 @@ var autoscalersAutoscalerRemoveCmd = &cobra.Command{
 
 func initautoscalersAutoscalerRemoveCmd() {
 
-	autoscalersAutoscalerRemoveCmd.Flags().String("app", "", "app parameter")
+	autoscalersAutoscalerRemoveCmd.Flags().StringP("app", "a", "", "app parameter")
 
-	autoscalersAutoscalerRemoveCmd.Flags().String("id", "", "id parameter")
+	autoscalersAutoscalerRemoveCmd.Flags().StringP("id", "i", "", "id parameter")
 
 	autoscalersAutoscalerRemoveCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }

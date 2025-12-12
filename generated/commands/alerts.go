@@ -56,7 +56,7 @@ var alertsListCmd = &cobra.Command{
 
 func initalertsListCmd() {
 
-	alertsListCmd.Flags().String("app", "", "app parameter")
+	alertsListCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	alertsListCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -126,7 +126,7 @@ var alertsAlertAddCmd = &cobra.Command{
 
 func initalertsAlertAddCmd() {
 
-	alertsAlertAddCmd.Flags().String("app", "", "app parameter")
+	alertsAlertAddCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	alertsAlertAddCmd.Flags().String("container-type", "", "ContainerType field")
 
@@ -189,9 +189,9 @@ var alertsAlertShowCmd = &cobra.Command{
 
 func initalertsAlertShowCmd() {
 
-	alertsAlertShowCmd.Flags().String("app", "", "app parameter")
+	alertsAlertShowCmd.Flags().StringP("app", "a", "", "app parameter")
 
-	alertsAlertShowCmd.Flags().String("id", "", "id parameter")
+	alertsAlertShowCmd.Flags().StringP("id", "i", "", "id parameter")
 
 	alertsAlertShowCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -263,9 +263,9 @@ var alertsAlertUpdateCmd = &cobra.Command{
 
 func initalertsAlertUpdateCmd() {
 
-	alertsAlertUpdateCmd.Flags().String("app", "", "app parameter")
+	alertsAlertUpdateCmd.Flags().StringP("app", "a", "", "app parameter")
 
-	alertsAlertUpdateCmd.Flags().String("id", "", "id parameter")
+	alertsAlertUpdateCmd.Flags().StringP("id", "i", "", "id parameter")
 
 	alertsAlertUpdateCmd.Flags().String("container-type", "", "ContainerType field")
 
@@ -319,9 +319,9 @@ var alertsAlertRemoveCmd = &cobra.Command{
 
 func initalertsAlertRemoveCmd() {
 
-	alertsAlertRemoveCmd.Flags().String("app", "", "app parameter")
+	alertsAlertRemoveCmd.Flags().StringP("app", "a", "", "app parameter")
 
-	alertsAlertRemoveCmd.Flags().String("id", "", "id parameter")
+	alertsAlertRemoveCmd.Flags().StringP("id", "i", "", "id parameter")
 
 	alertsAlertRemoveCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }

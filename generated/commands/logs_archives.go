@@ -58,7 +58,7 @@ var logsArchivesByCursorCmd = &cobra.Command{
 
 func initlogsArchivesByCursorCmd() {
 
-	logsArchivesByCursorCmd.Flags().String("app", "", "app parameter")
+	logsArchivesByCursorCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	logsArchivesByCursorCmd.Flags().String("cursor", "", "cursor parameter")
 
@@ -111,7 +111,7 @@ var logsArchivesRunCmd = &cobra.Command{
 
 func initlogsArchivesRunCmd() {
 
-	logsArchivesRunCmd.Flags().String("app", "", "app parameter")
+	logsArchivesRunCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	logsArchivesRunCmd.Flags().Int("page", 0, "page parameter")
 

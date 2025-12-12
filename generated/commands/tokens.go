@@ -203,7 +203,7 @@ var tokensTokenShowCmd = &cobra.Command{
 
 func inittokensTokenShowCmd() {
 
-	tokensTokenShowCmd.Flags().Int("id", 0, "id parameter")
+	tokensTokenShowCmd.Flags().IntP("id", "i", 0, "id parameter")
 
 	tokensTokenShowCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }

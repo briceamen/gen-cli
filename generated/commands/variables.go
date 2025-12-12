@@ -57,7 +57,7 @@ var variablesListCmd = &cobra.Command{
 
 func initvariablesListCmd() {
 
-	variablesListCmd.Flags().String("app", "", "app parameter")
+	variablesListCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	variablesListCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -106,7 +106,7 @@ var variablesListWithoutAliasCmd = &cobra.Command{
 
 func initvariablesListWithoutAliasCmd() {
 
-	variablesListWithoutAliasCmd.Flags().String("app", "", "app parameter")
+	variablesListWithoutAliasCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	variablesListWithoutAliasCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -159,9 +159,9 @@ var variablesVariableSetCmd = &cobra.Command{
 
 func initvariablesVariableSetCmd() {
 
-	variablesVariableSetCmd.Flags().String("app", "", "app parameter")
+	variablesVariableSetCmd.Flags().StringP("app", "a", "", "app parameter")
 
-	variablesVariableSetCmd.Flags().String("name", "", "name parameter")
+	variablesVariableSetCmd.Flags().StringP("name", "n", "", "name parameter")
 
 	variablesVariableSetCmd.Flags().String("value", "", "value parameter")
 
@@ -221,7 +221,7 @@ var variablesVariableMultipleSetCmd = &cobra.Command{
 
 func initvariablesVariableMultipleSetCmd() {
 
-	variablesVariableMultipleSetCmd.Flags().String("app", "", "app parameter")
+	variablesVariableMultipleSetCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	variablesVariableMultipleSetCmd.Flags().String("variables", "", "variables (JSON format)")
 
@@ -265,9 +265,9 @@ var variablesVariableUnsetCmd = &cobra.Command{
 
 func initvariablesVariableUnsetCmd() {
 
-	variablesVariableUnsetCmd.Flags().String("app", "", "app parameter")
+	variablesVariableUnsetCmd.Flags().StringP("app", "a", "", "app parameter")
 
-	variablesVariableUnsetCmd.Flags().String("id", "", "id parameter")
+	variablesVariableUnsetCmd.Flags().StringP("id", "i", "", "id parameter")
 
 	variablesVariableUnsetCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }

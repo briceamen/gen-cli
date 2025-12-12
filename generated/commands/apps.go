@@ -143,7 +143,7 @@ var appsDestroyCmd = &cobra.Command{
 
 func initappsDestroyCmd() {
 
-	appsDestroyCmd.Flags().String("name", "", "name parameter")
+	appsDestroyCmd.Flags().StringP("name", "n", "", "name parameter")
 
 	appsDestroyCmd.Flags().String("current-name", "", "currentName parameter")
 
@@ -196,7 +196,7 @@ var appsRenameCmd = &cobra.Command{
 
 func initappsRenameCmd() {
 
-	appsRenameCmd.Flags().String("name", "", "name parameter")
+	appsRenameCmd.Flags().StringP("name", "n", "", "name parameter")
 
 	appsRenameCmd.Flags().String("new-name", "", "newName parameter")
 
@@ -249,7 +249,7 @@ var appsTransferCmd = &cobra.Command{
 
 func initappsTransferCmd() {
 
-	appsTransferCmd.Flags().String("name", "", "name parameter")
+	appsTransferCmd.Flags().StringP("name", "n", "", "name parameter")
 
 	appsTransferCmd.Flags().String("email", "", "email parameter")
 
@@ -302,7 +302,7 @@ var appsSetStackCmd = &cobra.Command{
 
 func initappsSetStackCmd() {
 
-	appsSetStackCmd.Flags().String("name", "", "name parameter")
+	appsSetStackCmd.Flags().StringP("name", "n", "", "name parameter")
 
 	appsSetStackCmd.Flags().String("stack-i-d", "", "stackID parameter")
 
@@ -359,7 +359,7 @@ var appsRestartCmd = &cobra.Command{
 
 func initappsRestartCmd() {
 
-	appsRestartCmd.Flags().String("app", "", "app parameter")
+	appsRestartCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	appsRestartCmd.Flags().StringSlice("scope", nil, "Scope field")
 
@@ -478,7 +478,7 @@ var appsStatsCmd = &cobra.Command{
 
 func initappsStatsCmd() {
 
-	appsStatsCmd.Flags().String("app", "", "app parameter")
+	appsStatsCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	appsStatsCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -527,7 +527,7 @@ var appsContainerTypesCmd = &cobra.Command{
 
 func initappsContainerTypesCmd() {
 
-	appsContainerTypesCmd.Flags().String("app", "", "app parameter")
+	appsContainerTypesCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	appsContainerTypesCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -576,7 +576,7 @@ var appsContainersPsCmd = &cobra.Command{
 
 func initappsContainersPsCmd() {
 
-	appsContainersPsCmd.Flags().String("app", "", "app parameter")
+	appsContainersPsCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	appsContainersPsCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -627,7 +627,7 @@ var appsScaleCmd = &cobra.Command{
 
 func initappsScaleCmd() {
 
-	appsScaleCmd.Flags().String("app", "", "app parameter")
+	appsScaleCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	appsScaleCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -678,7 +678,7 @@ var appsForceHTTPSCmd = &cobra.Command{
 
 func initappsForceHTTPSCmd() {
 
-	appsForceHTTPSCmd.Flags().String("name", "", "name parameter")
+	appsForceHTTPSCmd.Flags().StringP("name", "n", "", "name parameter")
 
 	appsForceHTTPSCmd.Flags().Bool("enable", false, "enable parameter")
 
@@ -731,7 +731,7 @@ var appsStickySessionCmd = &cobra.Command{
 
 func initappsStickySessionCmd() {
 
-	appsStickySessionCmd.Flags().String("name", "", "name parameter")
+	appsStickySessionCmd.Flags().StringP("name", "n", "", "name parameter")
 
 	appsStickySessionCmd.Flags().Bool("enable", false, "enable parameter")
 
@@ -784,7 +784,7 @@ var appsRouterLogsCmd = &cobra.Command{
 
 func initappsRouterLogsCmd() {
 
-	appsRouterLogsCmd.Flags().String("name", "", "name parameter")
+	appsRouterLogsCmd.Flags().StringP("name", "n", "", "name parameter")
 
 	appsRouterLogsCmd.Flags().Bool("enable", false, "enable parameter")
 

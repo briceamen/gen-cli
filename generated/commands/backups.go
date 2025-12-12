@@ -58,7 +58,7 @@ var backupsBackupListCmd = &cobra.Command{
 
 func initbackupsBackupListCmd() {
 
-	backupsBackupListCmd.Flags().String("app", "", "app parameter")
+	backupsBackupListCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	backupsBackupListCmd.Flags().String("addon-i-d", "", "addonID parameter")
 
@@ -111,7 +111,7 @@ var backupsBackupCreateCmd = &cobra.Command{
 
 func initbackupsBackupCreateCmd() {
 
-	backupsBackupCreateCmd.Flags().String("app", "", "app parameter")
+	backupsBackupCreateCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	backupsBackupCreateCmd.Flags().String("addon-i-d", "", "addonID parameter")
 
@@ -166,7 +166,7 @@ var backupsBackupShowCmd = &cobra.Command{
 
 func initbackupsBackupShowCmd() {
 
-	backupsBackupShowCmd.Flags().String("app", "", "app parameter")
+	backupsBackupShowCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	backupsBackupShowCmd.Flags().String("addon-i-d", "", "addonID parameter")
 
@@ -223,7 +223,7 @@ var backupsBackupDownloadURLCmd = &cobra.Command{
 
 func initbackupsBackupDownloadURLCmd() {
 
-	backupsBackupDownloadURLCmd.Flags().String("app", "", "app parameter")
+	backupsBackupDownloadURLCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	backupsBackupDownloadURLCmd.Flags().String("addon-i-d", "", "addonID parameter")
 

@@ -101,7 +101,7 @@ var notificationPlatformsNotificationPlatformByNameCmd = &cobra.Command{
 
 func initnotificationPlatformsNotificationPlatformByNameCmd() {
 
-	notificationPlatformsNotificationPlatformByNameCmd.Flags().String("name", "", "name parameter")
+	notificationPlatformsNotificationPlatformByNameCmd.Flags().StringP("name", "n", "", "name parameter")
 
 	notificationPlatformsNotificationPlatformByNameCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }

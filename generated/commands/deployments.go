@@ -56,7 +56,7 @@ var deploymentsDeploymentListCmd = &cobra.Command{
 
 func initdeploymentsDeploymentListCmd() {
 
-	deploymentsDeploymentListCmd.Flags().String("app", "", "app parameter")
+	deploymentsDeploymentListCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	deploymentsDeploymentListCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -115,7 +115,7 @@ var deploymentsDeploymentListWithPaginationCmd = &cobra.Command{
 
 func initdeploymentsDeploymentListWithPaginationCmd() {
 
-	deploymentsDeploymentListWithPaginationCmd.Flags().String("app", "", "app parameter")
+	deploymentsDeploymentListWithPaginationCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	deploymentsDeploymentListWithPaginationCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -166,7 +166,7 @@ var deploymentsDeploymentCmd = &cobra.Command{
 
 func initdeploymentsDeploymentCmd() {
 
-	deploymentsDeploymentCmd.Flags().String("app", "", "app parameter")
+	deploymentsDeploymentCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	deploymentsDeploymentCmd.Flags().String("deploy", "", "deploy parameter")
 
@@ -324,7 +324,7 @@ var deploymentsCreateCmd = &cobra.Command{
 
 func initdeploymentsCreateCmd() {
 
-	deploymentsCreateCmd.Flags().String("app", "", "app parameter")
+	deploymentsCreateCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	deploymentsCreateCmd.Flags().String("git-ref", "", "GitRef field")
 

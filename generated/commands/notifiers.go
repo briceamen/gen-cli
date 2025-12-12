@@ -56,7 +56,7 @@ var notifiersListCmd = &cobra.Command{
 
 func initnotifiersListCmd() {
 
-	notifiersListCmd.Flags().String("app", "", "app parameter")
+	notifiersListCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	notifiersListCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -138,7 +138,7 @@ var notifiersNotifierProvisionCmd = &cobra.Command{
 
 func initnotifiersNotifierProvisionCmd() {
 
-	notifiersNotifierProvisionCmd.Flags().String("app", "", "app parameter")
+	notifiersNotifierProvisionCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	notifiersNotifierProvisionCmd.Flags().Bool("active", false, "Active field")
 
@@ -209,9 +209,9 @@ var notifiersNotifierByIDCmd = &cobra.Command{
 
 func initnotifiersNotifierByIDCmd() {
 
-	notifiersNotifierByIDCmd.Flags().String("app", "", "app parameter")
+	notifiersNotifierByIDCmd.Flags().StringP("app", "a", "", "app parameter")
 
-	notifiersNotifierByIDCmd.Flags().String("i-d", "", "ID parameter")
+	notifiersNotifierByIDCmd.Flags().StringP("i-d", "i", "", "ID parameter")
 
 	notifiersNotifierByIDCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -295,9 +295,9 @@ var notifiersNotifierUpdateCmd = &cobra.Command{
 
 func initnotifiersNotifierUpdateCmd() {
 
-	notifiersNotifierUpdateCmd.Flags().String("app", "", "app parameter")
+	notifiersNotifierUpdateCmd.Flags().StringP("app", "a", "", "app parameter")
 
-	notifiersNotifierUpdateCmd.Flags().String("i-d", "", "ID parameter")
+	notifiersNotifierUpdateCmd.Flags().StringP("i-d", "i", "", "ID parameter")
 
 	notifiersNotifierUpdateCmd.Flags().Bool("active", false, "Active field")
 
@@ -359,9 +359,9 @@ var notifiersNotifierDestroyCmd = &cobra.Command{
 
 func initnotifiersNotifierDestroyCmd() {
 
-	notifiersNotifierDestroyCmd.Flags().String("app", "", "app parameter")
+	notifiersNotifierDestroyCmd.Flags().StringP("app", "a", "", "app parameter")
 
-	notifiersNotifierDestroyCmd.Flags().String("i-d", "", "ID parameter")
+	notifiersNotifierDestroyCmd.Flags().StringP("i-d", "i", "", "ID parameter")
 
 	notifiersNotifierDestroyCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }

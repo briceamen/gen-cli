@@ -56,7 +56,7 @@ var addonsListCmd = &cobra.Command{
 
 func initaddonsListCmd() {
 
-	addonsListCmd.Flags().String("app", "", "app parameter")
+	addonsListCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	addonsListCmd.Flags().StringP("output", "o", "table", "Output format (table, json)")
 }
@@ -114,7 +114,7 @@ var addonsAddonProvisionCmd = &cobra.Command{
 
 func initaddonsAddonProvisionCmd() {
 
-	addonsAddonProvisionCmd.Flags().String("app", "", "app parameter")
+	addonsAddonProvisionCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	addonsAddonProvisionCmd.Flags().String("addon-provider---a-c-r0--", "", "AddonProviderID field")
 
@@ -160,7 +160,7 @@ var addonsAddonDestroyCmd = &cobra.Command{
 
 func initaddonsAddonDestroyCmd() {
 
-	addonsAddonDestroyCmd.Flags().String("app", "", "app parameter")
+	addonsAddonDestroyCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	addonsAddonDestroyCmd.Flags().String("addon-i-d", "", "addonID parameter")
 
@@ -219,7 +219,7 @@ var addonsAddonUpgradeCmd = &cobra.Command{
 
 func initaddonsAddonUpgradeCmd() {
 
-	addonsAddonUpgradeCmd.Flags().String("app", "", "app parameter")
+	addonsAddonUpgradeCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	addonsAddonUpgradeCmd.Flags().String("addon-i-d", "", "addonID parameter")
 
@@ -274,7 +274,7 @@ var addonsAddonTokenCmd = &cobra.Command{
 
 func initaddonsAddonTokenCmd() {
 
-	addonsAddonTokenCmd.Flags().String("app", "", "app parameter")
+	addonsAddonTokenCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	addonsAddonTokenCmd.Flags().String("addon-i-d", "", "addonID parameter")
 
@@ -327,7 +327,7 @@ var addonsAddonLogsURLCmd = &cobra.Command{
 
 func initaddonsAddonLogsURLCmd() {
 
-	addonsAddonLogsURLCmd.Flags().String("app", "", "app parameter")
+	addonsAddonLogsURLCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	addonsAddonLogsURLCmd.Flags().String("addon-i-d", "", "addonID parameter")
 
@@ -382,7 +382,7 @@ var addonsAddonLogsArchivesCmd = &cobra.Command{
 
 func initaddonsAddonLogsArchivesCmd() {
 
-	addonsAddonLogsArchivesCmd.Flags().String("app", "", "app parameter")
+	addonsAddonLogsArchivesCmd.Flags().StringP("app", "a", "", "app parameter")
 
 	addonsAddonLogsArchivesCmd.Flags().String("addon-i-d", "", "addonID parameter")
 
